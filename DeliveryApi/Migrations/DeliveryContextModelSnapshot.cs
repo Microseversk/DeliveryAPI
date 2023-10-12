@@ -56,7 +56,7 @@ namespace DeliveryApi.Migrations
 
                     b.HasIndex("DishingCartUserEmail");
 
-                    b.ToTable("_Dish");
+                    b.ToTable("Dish");
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.DishingCart", b =>
@@ -66,7 +66,7 @@ namespace DeliveryApi.Migrations
 
                     b.HasKey("UserEmail");
 
-                    b.ToTable("_DishingCart");
+                    b.ToTable("DishingCart");
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.Rating", b =>
@@ -75,31 +75,34 @@ namespace DeliveryApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserDtoId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("DishId");
 
-                    b.HasIndex("UserEmail");
+                    b.HasIndex("UserDtoId");
 
-                    b.ToTable("_Rating");
+                    b.ToTable("Rating");
                 });
 
-            modelBuilder.Entity("DeliveryApi.Models.User", b =>
+            modelBuilder.Entity("DeliveryApi.Models.UserDTO", b =>
                 {
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
+                    b.Property<Guid?>("AddressId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -108,13 +111,16 @@ namespace DeliveryApi.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<string>("Phone")
+                    b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Email");
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("_Users");
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.Dish", b =>
@@ -126,13 +132,13 @@ namespace DeliveryApi.Migrations
 
             modelBuilder.Entity("DeliveryApi.Models.Rating", b =>
                 {
-                    b.HasOne("DeliveryApi.Models.User", "User")
+                    b.HasOne("DeliveryApi.Models.UserDTO", "UserDto")
                         .WithMany()
-                        .HasForeignKey("UserEmail")
+                        .HasForeignKey("UserDtoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("UserDto");
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.DishingCart", b =>

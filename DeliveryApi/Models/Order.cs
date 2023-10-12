@@ -1,4 +1,5 @@
 ﻿using DeliveryApi.Enums;
+using DeliveryApi.Migrations;
 
 namespace DeliveryApi.Models;
 
@@ -10,5 +11,6 @@ public class Order
     public int Price { get; set; }
     public Guid AddressId { get; set; }
     public DateTime DeliveryTime { get; set; }
+    public AsHouse House { get; set; }
     public DateTime OrderTime { get; set; }
 }

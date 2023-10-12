@@ -11,5 +11,5 @@ public class Rating
     [Key,ForeignKey("Dish")]
     public Guid DishId { get; set; }
     
-    public User User { get; set; }
+    public UserDTO UserDto { get; set; }
 }
