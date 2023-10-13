@@ -1,11 +1,14 @@
 ﻿using DeliveryApi.Context;
+using DeliveryApi.Enums;
 using DeliveryApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DeliveryApi.Controllers;
 
+[Authorize(Policy = "AdminOnly")]
 [Route("api/admin/[action]")]
 [ApiController]
 public class AdminController : ControllerBase
@@ -32,7 +35,8 @@ public class AdminController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> DeleteUsers()
     {
-        _context.Users.RemoveRange(_context.Users.ToList());
+        var usersToDelete = _context.Users.Where(u => u.Role != Role.Admin);
+        _context.RemoveRange(usersToDelete);
         await _context.SaveChangesAsync();
         return Ok("all users were deleted");
     }

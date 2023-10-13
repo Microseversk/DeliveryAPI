@@ -1,19 +1,30 @@
 ﻿using DeliveryApi.Context;
+using DeliveryApi.Enums;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace DeliveryApi.Services;
 
 public class AuthService : IAuthService
 {
     private readonly DeliveryContext _context;
-    private readonly JwtTokenHelper _tokenHepler = new("key for token_asdasdjasdaskjdhaskjdhasdkjlahsdkjdlashlskdfvncmvnb xcmvbxwejcsldkjdchwiepchipweujhcwi", "Sasha", "all", 20); 
-    public AuthService(DeliveryContext context)
+    private readonly IConfiguration _configuration;
+    private readonly JwtTokenHelper _tokenHepler; 
+    public AuthService(DeliveryContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
+        
+        string key = _configuration["JWTSettings:SecretKey"];
+        string issuer = _configuration["JWTSettings:Issuer"];
+        string audience = _configuration["JWTSettings:Audience"];
+        double durationInMinute = double.Parse(_configuration["JWTSettings:DurationInMinute"]);
+        
+        _tokenHepler = new JwtTokenHelper(key,issuer,audience,durationInMinute);
     }
     public async Task<string> CreateUser(UserRegistration model)
     {
@@ -36,7 +47,7 @@ public class AuthService : IAuthService
         await _context.AddAsync(newUser);
         await _context.SaveChangesAsync();
         
-        var token = _tokenHepler.GenerateToken(model.Email);
+        var token = _tokenHepler.GenerateToken(newUser.Email, newUser.Role);
         
         return token;
     }
@@ -55,7 +66,9 @@ public class AuthService : IAuthService
             return "bad password";
         }
 
-        var token = _tokenHepler.GenerateToken(model.Email);
+        Role role = (user.Role == Role.Admin) ? Role.Admin : Role.User;
+
+        var token = _tokenHepler.GenerateToken(model.Email, role);
         return token;
     }
 }

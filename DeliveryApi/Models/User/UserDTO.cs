@@ -9,6 +9,8 @@ public class UserDTO
     [Key]
     public Guid Id { get; set; }
 
+    public Role Role { get; set; } = Role.User;
+
     [EmailAddress]
     public string Email { get; set; }
 

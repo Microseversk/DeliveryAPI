@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using DeliveryApi.Enums;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DeliveryApi.Helpers;
@@ -20,23 +22,19 @@ public class JwtTokenHelper
         _durationInMinutes = durationInMinutes;
     }
 
-    public string GenerateToken(string email)
+    public string GenerateToken(string email, Role role)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var keyBytes = Encoding.UTF8.GetBytes(_key);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Email, email),
-            }),
-            Expires = DateTime.Now.AddMinutes(_durationInMinutes),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes),
-                SecurityAlgorithms.HmacSha256Signature),
-            Issuer = _issuer,
-            Audience = _audience
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+
+        var claims = new List<Claim>{new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.Role, role.ToString())};
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
+        var jwtToken = new JwtSecurityToken(
+            issuer:_issuer,
+            audience:_audience,
+            claims:claims,
+            notBefore: DateTime.UtcNow,
+            expires: DateTime.UtcNow.AddMinutes(_durationInMinutes),
+            signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+        );
+        return new JwtSecurityTokenHandler().WriteToken(jwtToken);
     }
 }
