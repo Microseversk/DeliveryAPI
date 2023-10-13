@@ -3832,11 +3832,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryApi\\DeliveryApi\\DeliveryApi.csproj",
+      "projectUniqueName": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone)\\DeliveryApi\\DeliveryApi.csproj",
       "projectName": "DeliveryApi",
-      "projectPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryApi\\DeliveryApi\\DeliveryApi.csproj",
+      "projectPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone)\\DeliveryApi\\DeliveryApi.csproj",
       "packagesPath": "C:\\Users\\Aleksandr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryApi\\DeliveryApi\\obj\\",
+      "outputPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone)\\DeliveryApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Aleksandr\\AppData\\Roaming\\NuGet\\NuGet.Config",

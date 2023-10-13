@@ -1,4 +1,7 @@
-﻿using DeliveryApi.Context;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Azure.Core;
+using DeliveryApi.Context;
 using DeliveryApi.Enums;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
@@ -9,12 +12,12 @@ using Microsoft.Extensions.Options;
 
 namespace DeliveryApi.Services;
 
-public class AuthService : IAuthService
+public class AccountService : IAccountService
 {
     private readonly DeliveryContext _context;
     private readonly IConfiguration _configuration;
     private readonly JwtTokenHelper _tokenHepler; 
-    public AuthService(DeliveryContext context, IConfiguration configuration)
+    public AccountService(DeliveryContext context, IConfiguration configuration)
     {
         _context = context;
         _configuration = configuration;
@@ -70,5 +73,40 @@ public class AuthService : IAuthService
 
         var token = _tokenHepler.GenerateToken(model.Email, role);
         return token;
+    }
+
+    public async Task<UserProfile> GetProfile(string token)
+    {
+        var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == userEmail);
+        
+        return new UserProfile
+        {
+            FullName = user.FullName,
+            Email = user.Email,
+            AddressId = user.AddressId,
+            BirthDate = user.BirthDate,
+            Gender = user.Gender,
+            Phone = user.Phone
+        };
+    }
+
+    public async Task EditProfile(string token, UserEditProfile model)
+    {
+        var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == userEmail);
+        
+        if (user == null)
+        {
+            return;
+        }
+
+        user.FullName = model.FullName;
+        user.AddressId = model.AddressId;
+        user.BirthDate = model.BirthDate;
+        user.Gender = model.Gender;
+        user.Phone = model.Phone;
+        await _context.SaveChangesAsync();
+        return;
     }
 }
