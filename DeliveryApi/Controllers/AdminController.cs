@@ -26,12 +26,6 @@ public class AdminController : ControllerBase
         return Ok(await _context.Users.ToListAsync());
     }
     
-    [HttpGet("{guid}")]
-    public async Task<ActionResult<List<UserDTO>>> GetUserList(Guid id)
-    {
-        return Ok(await _context.Users.FirstOrDefaultAsync(u => u.Id == id));
-    }
-
     [HttpGet]
     public async Task<ActionResult> DeleteUsers()
     {
