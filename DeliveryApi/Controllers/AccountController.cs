@@ -20,7 +20,7 @@ public class AccountController : ControllerBase
     {
         return Ok(await _accountService.CreateUser(model));
     }
-    
+
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login(UserLogin model)
     {

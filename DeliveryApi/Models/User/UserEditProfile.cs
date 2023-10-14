@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DeliveryApi.Enums;
+using DeliveryApi.Validators;
 
 namespace DeliveryApi.Models;
 
@@ -10,6 +11,7 @@ public class UserEditProfile
 
     public Guid? AddressId { get; set; }
 
+    [BirthDate]
     public DateTime? BirthDate { get; set; }
 
     public Gender Gender { get; set; }
