@@ -89,7 +89,6 @@ C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\Azure.Core.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\Azure.Identity.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\BCrypt.Net-Next.dll
-C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\FluentValidation.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\Humanizer.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\Microsoft.AspNetCore.OpenApi.dll
