@@ -56,7 +56,7 @@ namespace DeliveryApi.Migrations
 
                     b.HasIndex("DishingCartUserEmail");
 
-                    b.ToTable("Dish");
+                    b.ToTable("Dish", (string)null);
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.DishingCart", b =>
@@ -66,7 +66,7 @@ namespace DeliveryApi.Migrations
 
                     b.HasKey("UserEmail");
 
-                    b.ToTable("DishingCart");
+                    b.ToTable("DishingCart", (string)null);
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.Rating", b =>
@@ -85,7 +85,7 @@ namespace DeliveryApi.Migrations
 
                     b.HasIndex("UserDtoId");
 
-                    b.ToTable("Rating");
+                    b.ToTable("Rating", (string)null);
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.UserDTO", b =>
@@ -123,7 +123,7 @@ namespace DeliveryApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DeliveryApi.Models.Dish", b =>
