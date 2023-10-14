@@ -8,5 +8,5 @@ public class DishingCart
     [Key,ForeignKey("User")]
     public string UserEmail { get; set; }
     
-    public List<Dish>? Dishes { get; set; }
+    public List<DishDTO>? Dishes { get; set; }
 }

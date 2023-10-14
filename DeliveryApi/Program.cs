@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using DeliveryApi.Context;
+using DeliveryApi.Enums;
 using DeliveryApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //Add Services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IDishService, DishService>();
 
 //Add Auth
 builder.Services.AddAuthentication(o =>

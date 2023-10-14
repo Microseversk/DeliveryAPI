@@ -10,7 +10,7 @@ public class DeliveryContext : DbContext
     }
 
     public DbSet<UserDTO> Users { get; set; }
-    public DbSet<Dish> Dish { get; set; }
+    public DbSet<DishDTO> Dish { get; set; }
     public DbSet<Rating> Rating { get; set; }
     public DbSet<DishingCart> DishingCart { get; set; }
 }
