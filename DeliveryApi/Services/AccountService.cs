@@ -16,19 +16,22 @@ public class AccountService : IAccountService
 {
     private readonly DeliveryContext _context;
     private readonly IConfiguration _configuration;
-    private readonly JwtTokenHelper _tokenHepler; 
+    private readonly JwtTokenHelper _tokenHepler;
+
     public AccountService(DeliveryContext context, IConfiguration configuration)
     {
         _context = context;
         _configuration = configuration;
-        
+
         string key = _configuration["JWTSettings:SecretKey"];
         string issuer = _configuration["JWTSettings:Issuer"];
         string audience = _configuration["JWTSettings:Audience"];
         double durationInMinute = double.Parse(_configuration["JWTSettings:DurationInMinute"]);
-        
-        _tokenHepler = new JwtTokenHelper(key,issuer,audience,durationInMinute);
+
+        _tokenHepler = new JwtTokenHelper(key, issuer, audience, durationInMinute);
     }
+
+    //Регистрация юзера
     public async Task<string> CreateUser(UserRegistration model)
     {
         var checkUser = await _context.Users.FirstOrDefaultAsync(u => model.Email == u.Email);
@@ -36,6 +39,7 @@ public class AccountService : IAccountService
         {
             return "email data is already in use";
         }
+
         UserDTO newUser = new UserDTO
         {
             Id = Guid.NewGuid(),
@@ -49,24 +53,29 @@ public class AccountService : IAccountService
         };
         await _context.AddAsync(newUser);
         await _context.SaveChangesAsync();
-        
+
         var token = _tokenHepler.GenerateToken(newUser.Email, newUser.Role);
-        
+
         return token;
     }
 
+    //Логин юзера
     public async Task<string> LoginUser(UserLogin model)
     {
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.Email);
+
         if (user == null)
         {
-            return $"User: {user.Email} Not Found";
+            throw new Exception(message: "Bad email");
+            return null;
         }
 
         var verifyPassword = HashPasswordHelper.VerifyPassword(model.Password, user.HashedPassword);
+
         if (!verifyPassword)
         {
-            return "bad password";
+            throw new Exception(message: "Bad password");
+            return null;
         }
 
         Role role = (user.Role == Role.Admin) ? Role.Admin : Role.User;
@@ -75,11 +84,12 @@ public class AccountService : IAccountService
         return token;
     }
 
+    //Получение юзера
     public async Task<UserProfile> GetProfile(string token)
     {
         var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == userEmail);
-        
+
         return new UserProfile
         {
             FullName = user.FullName,
@@ -91,11 +101,12 @@ public class AccountService : IAccountService
         };
     }
 
+    //Редактирование юзера
     public async Task EditProfile(string token, UserEditProfile model)
     {
         var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == userEmail);
-        
+
         if (user == null)
         {
             return;

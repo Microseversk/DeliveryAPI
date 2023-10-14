@@ -20,11 +20,20 @@ public class AccountController : ControllerBase
     {
         return Ok(await _accountService.CreateUser(model));
     }
-
+    
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login(UserLogin model)
+    public async Task<IActionResult> Login(UserLogin model)
     {
-        return Ok(await _accountService.LoginUser(model));
+        try
+        {
+            var token = new TokenResponse { Token = await _accountService.LoginUser(model) };
+            return Ok(token);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new Response{Message = e.Message});
+            throw;
+        }
     }
 
     [Authorize]
@@ -50,7 +59,7 @@ public class AccountController : ControllerBase
 
         if (!token.StartsWith("Bearer "))
         {
-            return BadRequest();
+            return Unauthorized();
         }
         token = token.Substring("Bearer ".Length);
 
