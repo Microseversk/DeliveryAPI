@@ -5,34 +5,45 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
+
 [Route("/")]
 [ApiController]
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
+
     public AccountController(IAccountService accountService)
     {
         _accountService = accountService;
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<string>> Register(UserRegistration model)
-    {
-        return Ok(await _accountService.CreateUser(model));
-    }
-    
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(UserLogin model)
+    [ProducesResponseType(typeof(TokenResponse),200)]
+    [ProducesResponseType(typeof(Response),400)]
+    public async Task<IActionResult> Register(UserRegistration model)
     {
         try
         {
-            var token = new TokenResponse { Token = await _accountService.LoginUser(model) };
-            return Ok(token);
+            return Ok(new TokenResponse{Token = await _accountService.CreateUser(model)});
         }
         catch (Exception e)
         {
-            return BadRequest(new Response{Message = e.Message});
-            throw;
+            return BadRequest(new Response { Message = e.Message });
+        }
+    }
+
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(TokenResponse), 200)]
+    [ProducesResponseType(typeof(Response), 400)]
+    public async Task<ActionResult<TokenResponse>> Login(UserLogin model)
+    {
+        try
+        {
+            return Ok(new TokenResponse { Token = await _accountService.LoginUser(model) });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new Response { Message = e.Message });
         }
     }
 
@@ -41,14 +52,9 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<UserProfile>> GetProfile()
     {
         var token = Request.Headers["Authorization"].ToString();
-
-        if (!token.StartsWith("Bearer "))
-        {
-            return BadRequest();
-        }
         token = token.Substring("Bearer ".Length);
-        
-        return Ok( await _accountService.GetProfile(token));
+
+        return Ok(await _accountService.GetProfile(token));
     }
 
     [Authorize]
@@ -56,11 +62,6 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> EditProfile(UserEditProfile model)
     {
         var token = Request.Headers["Authorization"].ToString();
-
-        if (!token.StartsWith("Bearer "))
-        {
-            return Unauthorized();
-        }
         token = token.Substring("Bearer ".Length);
 
         await _accountService.EditProfile(token, model);
