@@ -19,6 +19,6 @@ public class UserProfile
 
     public Gender Gender { get; set; }
     
-    [Phone]
+    [PhoneRussia]
     public string? Phone { get; set; }
 }

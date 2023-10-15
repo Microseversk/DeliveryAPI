@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
-[Route("api/[controller]/")]
+[Route("/")]
 [ApiController]
 public class AccountController : ControllerBase
 {
@@ -53,7 +53,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPut("profile")]
-    public async Task<ActionResult> EditProfile(UserEditProfile model)
+    public async Task<IActionResult> EditProfile(UserEditProfile model)
     {
         var token = Request.Headers["Authorization"].ToString();
 

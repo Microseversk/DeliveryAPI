@@ -23,7 +23,7 @@ public class UserDTO
     
     public Gender Gender { get; set; }
 
-    [Phone]
+    [PhoneRussia]
     public string? Phone { get; set; }
     
     public Guid? AddressId { get; set; }

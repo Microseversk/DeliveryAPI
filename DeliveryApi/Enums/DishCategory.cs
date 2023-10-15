@@ -2,11 +2,11 @@
 using System.Text.Json.Serialization;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum Category
+public enum DishCategory
 {
     Wok,
     Pizza,
     Soup,
-    Desert,
+    Dessert,
     Drink
 }
