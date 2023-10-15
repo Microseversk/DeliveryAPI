@@ -4,6 +4,7 @@ using DeliveryApi.Context;
 using DeliveryApi.Enums;
 using DeliveryApi.Models;
 using DeliveryApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
@@ -18,16 +19,17 @@ public class DishesController : ControllerBase
     {
         _dishService = dishService;
     }
-
-    [HttpPost]
-    public async Task<IActionResult> AddDish(List<DishDTO> model)
+    
+    [Authorize(Policy = "AdminOnly")]
+    [HttpPost("addDishes")]
+    public async Task<IActionResult> AddDishes(List<DishDTO> model)
     {
         await _dishService.AddDishes(model);
         return Ok();
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false, DishSorting sortingBy = DishSorting.NameAsc,[Range(1,int.MaxValue)]int page = 1)
+    public async Task<ActionResult<DishesMenuResponse>> GetDishes(DishCategory? category, bool vegeterian = false, DishSorting sortingBy = DishSorting.NameAsc,[Range(1,int.MaxValue)]int page = 1)
     {
         try
         {

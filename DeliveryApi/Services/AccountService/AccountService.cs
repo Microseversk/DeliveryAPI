@@ -37,7 +37,7 @@ public class AccountService : IAccountService
         var checkUser = await _context.Users.FirstOrDefaultAsync(u => model.Email == u.Email);
         if (checkUser != null)
         {
-            return "email data is already in use";
+            throw new Exception(message: "email data is already in use");
         }
 
         UserDTO newUser = new UserDTO

@@ -17,6 +17,11 @@ public class BirthDate : ValidationAttribute
             return birthDate <= now && birthDate >= minDate;
         }
 
+        if (value is null)
+        {
+            return true;
+        }
+
         return false;
     }
 }
