@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
 using DeliveryApi.Models;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
 
-[Route("api/[action]")]
+[Route("/")]
 [ApiController]
 public class DishesController : ControllerBase
 {
@@ -25,12 +26,17 @@ public class DishesController : ControllerBase
         return Ok();
     }
 
-    /*[HttpGet]
-    public async Task<IActionResult> GetDishes(int page, DishCategory category,
-        bool vegeterian, DishSorting sortingBy)
+    [HttpGet]
+    public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false, DishSorting sortingBy = DishSorting.NameAsc,[Range(1,int.MaxValue)]int page = 1)
     {
-        page = (page == null) ? 1 : page;
-        var menu = await _dishService.GetDishMenu(category, vegeterian, sortingBy, page);
-        return Ok(menu);
-    }*/
+        try
+        {
+            return Ok(await _dishService.GetDishMenu(category, vegeterian, sortingBy, page));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new Response { Message = e.Message });
+            throw;
+        }
+    }
 }

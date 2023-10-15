@@ -13,11 +13,35 @@ public class DishService : IDishService
     {
         _context = context;
     }
-    public async Task<(List<DishDTO>, PageInfo)> GetDishMenu(DishCategory category, bool vegeterian, DishSorting sortingBy, int page)
+
+    public async Task<DishesMenuResponse> GetDishMenu(DishCategory? category, bool vegeterian, DishSorting sortingBy,
+        int page)
     {
-        var reqDishes = _context.Dish.Where(dish => dish.DishCategory == category && dish.IsVegetarian == vegeterian);
+        double DISHES_ON_PAGE = 3;
+        PageInfo pageInfo = new PageInfo { PageSize = (int)DISHES_ON_PAGE, CurrentPage = page};
+        IQueryable<DishDTO> reqDishes;
+
+        if (category != null)
+        {
+            reqDishes = _context.Dish
+                .Where(dish => dish.DishCategory == category)
+                .Where(dish =>
+                    (vegeterian == false)
+                        ? dish.IsVegetarian == true || dish.IsVegetarian == false
+                        : dish.IsVegetarian == true);
+            
+        }
+        else
+        {
+            reqDishes = _context.Dish.Where(dish =>
+                (vegeterian == false)
+                    ? dish.IsVegetarian == true || dish.IsVegetarian == false
+                    : dish.IsVegetarian == true);
+        }
         
-        switch(sortingBy)
+        pageInfo.PageCount = (int)Math.Ceiling(reqDishes.ToList().Count() / DISHES_ON_PAGE);
+
+        switch (sortingBy)
         {
             case (DishSorting.NameAsc):
             {
@@ -53,10 +77,18 @@ public class DishService : IDishService
                 break;
         }
 
-        var menu = (reqDishes.ToList(),new PageInfo{CurrentPage = page});
-        return menu;
+        var gottedDishes = reqDishes.ToList();
+        var showedDishes = gottedDishes.Skip((pageInfo.CurrentPage - 1) * pageInfo.PageSize).Take(pageInfo.PageSize).ToList();
+
+        if (showedDishes.Count == 0)
+        {
+            throw new Exception(message: "Invalid page value");
+        }
+        
+        return new DishesMenuResponse { Dishes = showedDishes, Page = pageInfo };
     }
 
+    
     public async Task AddDishes(List<DishDTO> model)
     {
         await _context.Dish.AddRangeAsync(model);
