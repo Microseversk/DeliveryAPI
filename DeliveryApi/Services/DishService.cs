@@ -8,16 +8,18 @@ namespace DeliveryApi.Services;
 public class DishService : IDishService
 {
     private readonly DeliveryContext _context;
+    private readonly IConfiguration _config;
 
-    public DishService(DeliveryContext context)
+    public DishService(DeliveryContext context, IConfiguration config)
     {
         _context = context;
+        _config = config;
     }
 
     public async Task<DishesMenuResponse> GetDishMenu(DishCategory? category, bool vegeterian, DishSorting sortingBy,
         int page)
     {
-        double DISHES_ON_PAGE = 3;
+        double DISHES_ON_PAGE = double.Parse(_config["Page:DishesOnPage"]);
         PageInfo pageInfo = new PageInfo { PageSize = (int)DISHES_ON_PAGE, CurrentPage = page};
         IQueryable<DishDTO> reqDishes;
 
