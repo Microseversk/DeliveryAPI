@@ -12,6 +12,7 @@ public class DeliveryContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Rating>().HasKey(r => new { r.UserId, r.DishId });
+        modelBuilder.Entity<Basket>().HasKey(b => new { b.UserId, b.DishId });
         modelBuilder.Entity<UserDTO>().HasAlternateKey(u => u.Email);
     }
 
