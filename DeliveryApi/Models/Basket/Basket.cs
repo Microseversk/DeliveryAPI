@@ -3,16 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DeliveryApi.Models;
 
-public class Rating
+public class Basket
 {
-    [Range(0.0, 10.0, ErrorMessage = "Value must be between 0 and 10")]
-    public double Value { get; set; }
+    [Key]
     public Guid UserId { get; set; }
     public Guid DishId { get; set; }
+    public int Amount { get; set; }
 
-    [ForeignKey("UserId")] 
-    private UserDTO User { get; set; }
+    [ForeignKey("UserId")]
+    public UserDTO User { get; set; }
 
     [ForeignKey("DishId")]
-    private DishDTO Dish { get; set; }
+    public DishDTO Dish { get; set; }
+
 }
