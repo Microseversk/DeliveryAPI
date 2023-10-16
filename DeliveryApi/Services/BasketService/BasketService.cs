@@ -36,15 +36,15 @@ public class BasketService : IBasketService
         return userBasketDTO;
     }
 
-    public async Task AddToUserBasket(string token, Guid dishID)
+    public async Task AddToUserBasket(string token, Guid dishId)
     {
         var email = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
         var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
-        var dishCard = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishID);
+        var dishCard = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishId);
 
         if (dishCard == null)
         {
-            await _context.Basket.AddAsync(new Basket { UserId = user.Id, DishId = dishID, Amount = 1 });
+            await _context.Basket.AddAsync(new Basket { UserId = user.Id, DishId = dishId, Amount = 1 });
         }
         else
         {
@@ -54,8 +54,21 @@ public class BasketService : IBasketService
         await _context.SaveChangesAsync();
     }
 
-    public Task DeleteFromUserBasket(string token, Guid dishId)
+    public async Task DeleteFromUserBasket(string token, Guid dishId, bool increase)
     {
-        throw new NotImplementedException();
+        var email = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        var dishCard = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishId);
+
+        if (increase == false || dishCard.Amount == 1)
+        {
+            _context.Basket.Remove(dishCard);
+        }
+        else
+        {
+            dishCard.Amount -= 1;
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

@@ -38,4 +38,15 @@ public class BasketController : ControllerBase
 
         return Ok();
     }
+    
+    [Authorize]
+    [HttpDelete("cart/{id}")]
+    public async Task<IActionResult> DeleteFromUserBasket(Guid id, bool increase)
+    {
+        var token = Request.Headers["Authorization"].ToString();
+        token = token.Substring("Bearer ".Length);
+        await _basketService.DeleteFromUserBasket(token,id,increase);
+
+        return Ok();
+    }
 }
