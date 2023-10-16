@@ -23,13 +23,13 @@ public class AdminController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserDTO>>> GetUserList()
     {
-        return Ok(await _context.Users.ToListAsync());
+        return Ok(await _context.User.ToListAsync());
     }
     
     [HttpGet]
     public async Task<ActionResult> DeleteUsers()
     {
-        var usersToDelete = _context.Users.Where(u => u.Role != Role.Admin);
+        var usersToDelete = _context.User.Where(u => u.Role != Role.Admin);
         _context.RemoveRange(usersToDelete);
         await _context.SaveChangesAsync();
         return Ok("all users were deleted");

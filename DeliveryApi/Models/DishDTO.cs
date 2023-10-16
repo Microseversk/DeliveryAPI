@@ -13,11 +13,11 @@ public class DishDTO
     
     public int Price { get; set; }
     
-    public DishCategory DishCategory { get; set; }
+    public DishCategory Category { get; set; }
     
     public string? Description { get; set; }
     
-    public bool IsVegetarian { get; set; }
+    public bool Vegetarian { get; set; }
     
     public string? Image { get; set; }
     

@@ -35,7 +35,7 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(typeof(Response), 400)]
-    public async Task<ActionResult<TokenResponse>> Login(UserLogin model)
+    public async Task<IActionResult> Login(UserLogin model)
     {
         try
         {

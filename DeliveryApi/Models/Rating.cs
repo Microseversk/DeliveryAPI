@@ -5,11 +5,15 @@ namespace DeliveryApi.Models;
 
 public class Rating
 {
-    [Range(0, 10, ErrorMessage = "Value must be between 0 and 10")]
-    public int Value { get; set; }
+    [Range(0.0, 10.0, ErrorMessage = "Value must be between 0 and 10")]
+    public double Value { get; set; }
     
-    [Key,ForeignKey("Dish")]
+    public Guid UserId { get; set; }
     public Guid DishId { get; set; }
     
-    public UserDTO UserDto { get; set; }
+    [ForeignKey("UserId")]
+    public UserDTO User { get; set; }
+    
+    [ForeignKey("DishId")]
+    public DishDTO Dish { get; set; }
 }

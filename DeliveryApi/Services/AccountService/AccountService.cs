@@ -34,7 +34,7 @@ public class AccountService : IAccountService
     //Регистрация юзера
     public async Task<string> CreateUser(UserRegistration model)
     {
-        var checkUser = await _context.Users.FirstOrDefaultAsync(u => model.Email == u.Email);
+        var checkUser = await _context.User.FirstOrDefaultAsync(u => model.Email == u.Email);
         if (checkUser != null)
         {
             throw new Exception(message: "email data is already in use");
@@ -62,7 +62,7 @@ public class AccountService : IAccountService
     //Логин юзера
     public async Task<string> LoginUser(UserLogin model)
     {
-        var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.Email);
+        var user = await _context.User.SingleOrDefaultAsync(u => u.Email == model.Email);
 
         if (user == null)
         {
@@ -88,7 +88,7 @@ public class AccountService : IAccountService
     public async Task<UserProfile> GetProfile(string token)
     {
         var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
-        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == userEmail);
+        var user = await _context.User.FirstOrDefaultAsync(user => user.Email == userEmail);
 
         return new UserProfile
         {
@@ -105,7 +105,7 @@ public class AccountService : IAccountService
     public async Task EditProfile(string token, UserEditProfile model)
     {
         var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
-        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == userEmail);
+        var user = await _context.User.FirstOrDefaultAsync(user => user.Email == userEmail);
 
         if (user == null)
         {
