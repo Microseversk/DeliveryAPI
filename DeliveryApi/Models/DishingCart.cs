@@ -5,8 +5,14 @@ namespace DeliveryApi.Models;
 
 public class DishingCart
 {
-    [Key,ForeignKey("User")]
-    public string UserEmail { get; set; }
+    [Key]
+    public Guid UserId { get; set; }
     
-    public List<DishDTO>? Dishes { get; set; }
+    public Guid DishId { get; set; }
+    
+    [ForeignKey("UserId")]
+    public UserDTO User { get; set; }
+    
+    [ForeignKey("DishId")]
+    public DishDTO Dish { get; set; }
 }
