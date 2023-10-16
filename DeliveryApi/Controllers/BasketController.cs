@@ -27,4 +27,15 @@ public class BasketController : ControllerBase
         token = token.Substring("Bearer ".Length);
         return Ok(await _basketService.GetUserBasket(token));
     }
+
+    [Authorize]
+    [HttpGet("cart/{id}")]
+    public async Task<IActionResult> AddToUserBasket(Guid id)
+    {
+        var token = Request.Headers["Authorization"].ToString();
+        token = token.Substring("Bearer ".Length);
+        await _basketService.AddToUserBasket(token,id);
+
+        return Ok();
+    }
 }

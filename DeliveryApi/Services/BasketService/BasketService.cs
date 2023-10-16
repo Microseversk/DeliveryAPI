@@ -36,12 +36,25 @@ public class BasketService : IBasketService
         return userBasketDTO;
     }
 
-    public Task AddToUserBasket(string token)
+    public async Task AddToUserBasket(string token, Guid dishID)
     {
-        throw new NotImplementedException();
+        var email = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        var dishCard = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishID);
+
+        if (dishCard == null)
+        {
+            await _context.Basket.AddAsync(new Basket { UserId = user.Id, DishId = dishID, Amount = 1 });
+        }
+        else
+        {
+            dishCard.Amount += 1;
+        }
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task DeleteFromUserBasket(string token)
+    public Task DeleteFromUserBasket(string token, Guid dishId)
     {
         throw new NotImplementedException();
     }
