@@ -31,7 +31,6 @@ public class AccountService : IAccountService
         _tokenHepler = new JwtTokenHelper(key, issuer, audience, durationInMinute);
     }
 
-    //Регистрация юзера
     public async Task<string> CreateUser(UserRegistration model)
     {
         var checkUser = await _context.User.FirstOrDefaultAsync(u => model.Email == u.Email);
@@ -59,7 +58,6 @@ public class AccountService : IAccountService
         return token;
     }
 
-    //Логин юзера
     public async Task<string> LoginUser(UserLogin model)
     {
         var user = await _context.User.SingleOrDefaultAsync(u => u.Email == model.Email);
@@ -84,11 +82,9 @@ public class AccountService : IAccountService
         return token;
     }
 
-    //Получение юзера
     public async Task<UserProfile> GetProfile(string token)
     {
-        var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
-        var user = await _context.User.FirstOrDefaultAsync(user => user.Email == userEmail);
+        var user = await JwtParseHelper.GetUserFromContext(token, _context);
 
         return new UserProfile
         {
@@ -101,11 +97,9 @@ public class AccountService : IAccountService
         };
     }
 
-    //Редактирование юзера
     public async Task EditProfile(string token, UserEditProfile model)
     {
-        var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
-        var user = await _context.User.FirstOrDefaultAsync(user => user.Email == userEmail);
+        var user = await JwtParseHelper.GetUserFromContext(token, _context);
 
         if (user == null)
         {

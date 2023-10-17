@@ -1,4 +1,5 @@
-﻿using DeliveryApi.Models;
+﻿using DeliveryApi.Helpers;
+using DeliveryApi.Models;
 using DeliveryApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -51,9 +52,7 @@ public class AccountController : ControllerBase
     [HttpGet("profile")]
     public async Task<ActionResult<UserProfile>> GetProfile()
     {
-        var token = Request.Headers["Authorization"].ToString();
-        token = token.Substring("Bearer ".Length);
-
+        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         return Ok(await _accountService.GetProfile(token));
     }
 
@@ -61,9 +60,7 @@ public class AccountController : ControllerBase
     [HttpPut("profile")]
     public async Task<IActionResult> EditProfile(UserEditProfile model)
     {
-        var token = Request.Headers["Authorization"].ToString();
-        token = token.Substring("Bearer ".Length);
-
+        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         await _accountService.EditProfile(token, model);
         return Ok();
     }

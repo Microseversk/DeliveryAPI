@@ -4,6 +4,7 @@ using DeliveryApi.Context;
 using DeliveryApi.Enums;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace DeliveryApi.Services;
@@ -113,18 +114,16 @@ public class DishService : IDishService
 
     public async Task<Rating> CheckUserRated(string token, Guid dishId)
     {
-        var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
-        var user = await _context.User.FirstOrDefaultAsync(u => u.Email == userEmail);
+        var user = await JwtParseHelper.GetUserFromContext(token, _context);
         
         var rate = await _context.Rating.FindAsync(user.Id,dishId);
 
         return rate;
     }
-
+    
     public async Task PutUserRating(string token, Guid dishId, double value)
     {
-        var userEmail = JwtParseHelper.GetClaimValue(token, ClaimTypes.Email);
-        var user = await _context.User.FirstOrDefaultAsync(u => u.Email == userEmail);
+        var user = await JwtParseHelper.GetUserFromContext(token, _context);
         Rating newRate = new Rating { UserId = user.Id, DishId = dishId, Value = value };
         
         var rate = await CheckUserRated(token, dishId);
