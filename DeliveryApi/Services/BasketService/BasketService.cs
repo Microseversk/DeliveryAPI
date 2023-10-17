@@ -39,7 +39,7 @@ public class BasketService : IBasketService
     {
         var user = await JwtParseHelper.GetUserFromContext(token, _context);
         var dishCard = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishId);
-
+        
         if (dishCard == null)
         {
             await _context.Basket.AddAsync(new Basket { UserId = user.Id, DishId = dishId, Amount = 1 });
@@ -56,7 +56,10 @@ public class BasketService : IBasketService
     {
         var user = await JwtParseHelper.GetUserFromContext(token, _context);
         var dishCard = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishId);
-
+        if (dishCard == null)
+        {
+            throw new Exception(message: $@"such dish with id {dishId} not found");
+        }
         if (increase == false || dishCard.Amount == 1)
         {
             _context.Basket.Remove(dishCard);

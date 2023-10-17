@@ -17,11 +17,11 @@ public class BasketController : ControllerBase
     {
         _basketService = basketService;
     }
-    
+
     [Authorize]
     [HttpGet("cart/")]
-    [ProducesResponseType(typeof(List<BasketDTO>),200)]
-    [ProducesResponseType(typeof(Response),500)]
+    [ProducesResponseType(typeof(List<BasketDTO>), 200)]
+    [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> GetUserBusket()
     {
         var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
@@ -33,17 +33,25 @@ public class BasketController : ControllerBase
     public async Task<IActionResult> AddToUserBasket(Guid id)
     {
         var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        await _basketService.AddToUserBasket(token,id);
+        await _basketService.AddToUserBasket(token, id);
 
         return Ok();
     }
-    
+
     [Authorize]
     [HttpDelete("cart/{id}")]
+    [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> DeleteFromUserBasket(Guid id, bool increase)
     {
         var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        await _basketService.DeleteFromUserBasket(token,id,increase);
+        try
+        {
+            await _basketService.DeleteFromUserBasket(token, id, increase);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500,new Response { Message = e.Message });
+        }
 
         return Ok();
     }
