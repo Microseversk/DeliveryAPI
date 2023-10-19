@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
+using DeliveryApi.Helpers;
 using DeliveryApi.Models;
 using DeliveryApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,7 @@ public class DishesController : ControllerBase
     {
         _dishService = dishService;
     }
-    
+
     [Authorize(Policy = "AdminOnly")]
     [HttpPost("addDishes")]
     public async Task<IActionResult> AddDishes(List<DishDTO> model)
@@ -30,9 +31,10 @@ public class DishesController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(DishesMenuResponse),200)]
-    [ProducesResponseType(typeof(Response),400)]
-    public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false, DishSorting sortingBy = DishSorting.NameAsc,[Range(1,int.MaxValue)]int page = 1)
+    [ProducesResponseType(typeof(DishesMenuResponse), 200)]
+    [ProducesResponseType(typeof(Response), 500)]
+    public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false,
+        DishSorting sortingBy = DishSorting.NameAsc, [Range(1, int.MaxValue)] int page = 1)
     {
         try
         {
@@ -40,14 +42,13 @@ public class DishesController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new Response { Message = e.Message });
-            throw;
+            return StatusCode(500, new Response { Message = e.Message });
         }
     }
 
     [HttpGet("item/{id}")]
-    [ProducesResponseType(typeof(DishDTO),200)]
-    [ProducesResponseType(typeof(Response),400)]
+    [ProducesResponseType(typeof(DishDTO), 200)]
+    [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> GetDishById(Guid id)
     {
         try
@@ -62,24 +63,36 @@ public class DishesController : ControllerBase
 
     [Authorize]
     [HttpGet("item/{id}/rating/check")]
-    [ProducesResponseType(typeof(bool),200)]
+    [ProducesResponseType(typeof(bool), 200)]
+    [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> GetUserRateOnDish(Guid id)
     {
-        var token = Request.Headers["Authorization"].ToString();
-        token = token.Substring("Bearer ".Length);
-        bool response = (await _dishService.CheckUserRated(token, id) == null) ? false : true;
-        return Ok(response);
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            bool response = (await _dishService.CheckUserRated(token, id) == null) ? false : true;
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
-    
+
     [Authorize]
     [HttpPost("item/{id}/rating/")]
+    [ProducesResponseType(typeof(Response),500)]
     public async Task<IActionResult> PostUserRate(Guid id, double value)
     {
-        var token = Request.Headers["Authorization"].ToString();
-        token = token.Substring("Bearer ".Length);
-        
-        await _dishService.PutUserRating(token, id, value);
-        
-        return Ok();
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            await _dishService.PutUserRating(token, id, value);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
 }

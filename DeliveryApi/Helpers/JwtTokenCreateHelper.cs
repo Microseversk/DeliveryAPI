@@ -7,14 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DeliveryApi.Helpers;
 
-public class JwtTokenHelper
+public class JwtTokenCreateHelper
 {
     private readonly string _key;
     private readonly string _issuer;
     private readonly string _audience;
     private readonly double _durationInMinutes;
 
-    public JwtTokenHelper(string key, string issuer, string audience, double durationInMinutes)
+    public JwtTokenCreateHelper(string key, string issuer, string audience, double durationInMinutes)
     {
         _key = key;
         _issuer = issuer;

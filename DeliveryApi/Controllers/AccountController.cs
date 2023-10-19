@@ -19,13 +19,13 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    [ProducesResponseType(typeof(TokenResponse),200)]
-    [ProducesResponseType(typeof(Response),400)]
+    [ProducesResponseType(typeof(TokenResponse), 200)]
+    [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> Register(UserRegistration model)
     {
         try
         {
-            return Ok(new TokenResponse{Token = await _accountService.CreateUser(model)});
+            return Ok(new TokenResponse { Token = await _accountService.CreateUser(model) });
         }
         catch (Exception e)
         {
@@ -49,19 +49,53 @@ public class AccountController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("logout")]
+    [ProducesResponseType(typeof(Response), 500)]
+    public async Task<IActionResult> Logout()
+    {
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            await _accountService.LogoutUser(token);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
+
+        return Ok();
+    }
+
+    [Authorize]
     [HttpGet("profile")]
+    [ProducesResponseType(typeof(Response), 500)]
     public async Task<ActionResult<UserProfile>> GetProfile()
     {
-        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        return Ok(await _accountService.GetProfile(token));
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            return Ok(await _accountService.GetProfile(token));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
 
     [Authorize]
     [HttpPut("profile")]
+    [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> EditProfile(UserEditProfile model)
     {
-        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        await _accountService.EditProfile(token, model);
-        return Ok();
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            await _accountService.EditProfile(token, model);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
 }

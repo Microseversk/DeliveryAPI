@@ -16,7 +16,7 @@ public class AccountService : IAccountService
 {
     private readonly DeliveryContext _context;
     private readonly IConfiguration _configuration;
-    private readonly JwtTokenHelper _tokenHepler;
+    private readonly JwtTokenCreateHelper _tokenCreateHepler;
 
     public AccountService(DeliveryContext context, IConfiguration configuration)
     {
@@ -28,7 +28,7 @@ public class AccountService : IAccountService
         string audience = _configuration["JWTSettings:Audience"];
         double durationInMinute = double.Parse(_configuration["JWTSettings:DurationInMinute"]);
 
-        _tokenHepler = new JwtTokenHelper(key, issuer, audience, durationInMinute);
+        _tokenCreateHepler = new JwtTokenCreateHelper(key, issuer, audience, durationInMinute);
     }
 
     public async Task<string> CreateUser(UserRegistration model)
@@ -53,7 +53,7 @@ public class AccountService : IAccountService
         await _context.AddAsync(newUser);
         await _context.SaveChangesAsync();
 
-        var token = _tokenHepler.GenerateToken(newUser.Email, newUser.Role);
+        var token = _tokenCreateHepler.GenerateToken(newUser.Email, newUser.Role);
 
         return token;
     }
@@ -78,13 +78,19 @@ public class AccountService : IAccountService
 
         Role role = (user.Role == Role.Admin) ? Role.Admin : Role.User;
 
-        var token = _tokenHepler.GenerateToken(model.Email, role);
+        var token = _tokenCreateHepler.GenerateToken(model.Email, role);
         return token;
+    }
+
+    public async Task LogoutUser(string token)
+    {
+        await _context.BannedTokens.AddAsync(new BannedToken{Token = token});
+        await _context.SaveChangesAsync();
     }
 
     public async Task<UserProfile> GetProfile(string token)
     {
-        var user = await JwtParseHelper.GetUserFromContext(token, _context);
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
 
         return new UserProfile
         {
@@ -99,7 +105,7 @@ public class AccountService : IAccountService
 
     public async Task EditProfile(string token, UserEditProfile model)
     {
-        var user = await JwtParseHelper.GetUserFromContext(token, _context);
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
 
         if (user == null)
         {

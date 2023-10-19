@@ -7,6 +7,7 @@ public interface IAccountService
 {
     public Task<string> CreateUser(UserRegistration model);
     public Task<string> LoginUser(UserLogin model);
+    public Task LogoutUser(string token);
     public Task<UserProfile> GetProfile(string token);
     public Task EditProfile(string token, UserEditProfile model);
 }
