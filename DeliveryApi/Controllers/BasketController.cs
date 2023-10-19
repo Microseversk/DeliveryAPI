@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
 
+[Authorize]
 [Route("/")]
 [ApiController]
 public class BasketController : ControllerBase
@@ -18,41 +19,52 @@ public class BasketController : ControllerBase
         _basketService = basketService;
     }
 
-    [Authorize]
     [HttpGet("cart/")]
     [ProducesResponseType(typeof(List<BasketDTO>), 200)]
     [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> GetUserBusket()
     {
-        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        return Ok(await _basketService.GetUserBasket(token));
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            return Ok(await _basketService.GetUserBasket(token));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
-
-    [Authorize]
+    
     [HttpGet("cart/{id}")]
+    [ProducesResponseType(typeof(Response),500)]
     public async Task<IActionResult> AddToUserBasket(Guid id)
     {
-        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        await _basketService.AddToUserBasket(token, id);
-
-        return Ok();
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            await _basketService.AddToUserBasket(token, id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
+        
     }
 
-    [Authorize]
     [HttpDelete("cart/{id}")]
     [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> DeleteFromUserBasket(Guid id, bool increase)
     {
-        var token = JwtParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         try
         {
             await _basketService.DeleteFromUserBasket(token, id, increase);
+            return Ok();
         }
         catch (Exception e)
         {
-            return StatusCode(500,new Response { Message = e.Message });
+            return StatusCode(500, new Response { Message = e.Message });
         }
-
-        return Ok();
     }
 }

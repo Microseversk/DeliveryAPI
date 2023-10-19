@@ -82,8 +82,8 @@ public class DishService : IDishService
                 break;
         }
 
-        var gottedDishes = reqDishes.ToList();
-        var showedDishes = gottedDishes.Skip((pageInfo.CurrentPage - 1) * pageInfo.PageSize).Take(pageInfo.PageSize)
+        var gottenDishes = reqDishes.ToList();
+        var showedDishes = gottenDishes.Skip((pageInfo.CurrentPage - 1) * pageInfo.PageSize).Take(pageInfo.PageSize)
             .ToList();
 
         if (showedDishes.Count == 0)
@@ -114,7 +114,7 @@ public class DishService : IDishService
 
     public async Task<Rating> CheckUserRated(string token, Guid dishId)
     {
-        var user = await JwtParseHelper.GetUserFromContext(token, _context);
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
         
         var rate = await _context.Rating.FindAsync(user.Id,dishId);
 
@@ -123,7 +123,7 @@ public class DishService : IDishService
     
     public async Task PutUserRating(string token, Guid dishId, double value)
     {
-        var user = await JwtParseHelper.GetUserFromContext(token, _context);
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
         Rating newRate = new Rating { UserId = user.Id, DishId = dishId, Value = value };
         
         var rate = await CheckUserRated(token, dishId);

@@ -21,6 +21,7 @@ public class DeliveryContext : DbContext
     public DbSet<Rating> Rating { get; set; }
 
     public DbSet<DishingCart> DishingCart { get; set; }
-
     public DbSet<Basket> Basket { get; set; }
+    
+    public DbSet<BannedToken> BannedTokens { get; set; }
 }
