@@ -3,6 +3,7 @@ using DeliveryApi.Enums;
 using DeliveryApi.Helpers;
 using DeliveryApi.Migrations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DeliveryApi.Services.AddressService;
 
@@ -17,37 +18,35 @@ public class AddressService : IAddressService
 
     public async Task<List<AddressDTO>> GetObjectChildren(int parentObjectId, string? query)
     {
+        int showCount = string.IsNullOrEmpty(query) ? 10 : Int32.MaxValue;
+
+
         var childrenDTO = (from AsAdmHierarchy in _context.AsAdmHierarchies
-            join AsAddrObj in _context.AsAddrObjs on AsAdmHierarchy.Objectid equals AsAddrObj.Objectid
-            where AsAdmHierarchy.Parentobjid == parentObjectId &&
-                  (AsAddrObj.Name.Contains(query) || string.IsNullOrEmpty(query))
+            where AsAdmHierarchy.Parentobjid == parentObjectId
+            from AsHouses in _context.AsHouses.Where(h => AsAdmHierarchy.Objectid == h.Objectid && h.Isactual == 1)
+                .DefaultIfEmpty()
+            from AsAddrObj in _context.AsAddrObjs.Where(a => AsAdmHierarchy.Objectid == a.Objectid && a.Isactual == 1)
+                .DefaultIfEmpty()
+            where (AsAddrObj != null && (AsAddrObj.Name.Contains(query)) || (AsHouses != null &&
+                                                                             AsHouses.Housenum.Contains(query))
+                                                                         || string.IsNullOrEmpty(query))
             select new AddressDTO
             {
-                ObjectId = AsAddrObj.Objectid,
-                ObjectGuid = AsAddrObj.Objectguid,
-                Text = AsAddrObj.Typename + " " + AsAddrObj.Name,
-                ObjectLevel = (GarAddressLevel)int.Parse(AsAddrObj.Level),
-                ObjectLevelText = EnumHelper.GetDescription((GarAddressLevel)int.Parse(AsAddrObj.Level))
-            }).Take(10).ToList();
-
-        if (childrenDTO.Count == 0)
-        {
-            childrenDTO = (from AsAdmHierarchy in _context.AsAdmHierarchies
-                join AsHouses in _context.AsHouses on AsAdmHierarchy.Objectid equals AsHouses.Objectid
-                where AsAdmHierarchy.Parentobjid == parentObjectId &&
-                      (AsHouses.Housenum.Contains(query) || string.IsNullOrEmpty(query))
-                select new AddressDTO
-                {
-                    ObjectId = AsHouses.Objectid,
-                    ObjectGuid = AsHouses.Objectguid,
-                    Text = AsHouses.Housenum,
-                    ObjectLevel = GarAddressLevel.Building,
-                    ObjectLevelText = EnumHelper.GetDescription(GarAddressLevel.Building)
-                }).Take(10).ToList();
-        }
+                ObjectId = AsAddrObj != null ? AsAddrObj.Objectid : AsHouses.Objectid,
+                ObjectGuid = AsAddrObj != null ? AsAddrObj.Objectguid : AsHouses.Objectguid,
+                Text = AsAddrObj != null ? AsAddrObj.Typename + " " + AsAddrObj.Name : AsHouses.Housenum,
+                ObjectLevel =
+                    AsAddrObj != null
+                        ? ((GarAddressLevel)int.Parse(AsAddrObj.Level)).ToString()
+                        : ((HouseType)AsHouses.Housetype).ToString(),
+                ObjectLevelText = AsAddrObj != null
+                    ? EnumHelper.GetDescription((GarAddressLevel)int.Parse(AsAddrObj.Level))
+                    : EnumHelper.GetDescription((HouseType)AsHouses.Housetype)
+            }).Take(showCount).ToList();
 
         return childrenDTO;
     }
+
 
     public async Task<List<AddressDTO>> GetAddressChain(long? objectId)
     {
@@ -73,7 +72,7 @@ public class AddressService : IAddressService
                     ObjectId = objInfo.Objectid,
                     ObjectGuid = objInfo.Objectguid,
                     Text = objInfo.Typename + " " + objInfo.Name,
-                    ObjectLevel = (GarAddressLevel)int.Parse(objInfo.Level),
+                    ObjectLevel = ((GarAddressLevel)int.Parse(objInfo.Level)).ToString(),
                     ObjectLevelText = EnumHelper.GetDescription((GarAddressLevel)int.Parse(objInfo.Level))
                 });
             }
@@ -85,8 +84,8 @@ public class AddressService : IAddressService
                     ObjectId = buildingInfo.Objectid,
                     ObjectGuid = buildingInfo.Objectguid,
                     Text = buildingInfo.Housenum,
-                    ObjectLevel = GarAddressLevel.Building,
-                    ObjectLevelText = EnumHelper.GetDescription(GarAddressLevel.Building)
+                    ObjectLevel = ((HouseType)buildingInfo.Housetype).ToString(),
+                    ObjectLevelText = EnumHelper.GetDescription((HouseType)buildingInfo.Housetype)
                 });
             }
         }

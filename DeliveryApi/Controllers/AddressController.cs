@@ -19,7 +19,14 @@ public class AddressController : ControllerBase
     [ProducesResponseType(typeof(Response),500)]
     public async Task<IActionResult> GetObjectChildren(int parentObjectId, string? query)
     {
-        return Ok(await _addressService.GetObjectChildren(parentObjectId, query));
+        try
+        {
+            return Ok(await _addressService.GetObjectChildren(parentObjectId, query));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
     
     [HttpGet("getaddresschain")]
@@ -27,7 +34,14 @@ public class AddressController : ControllerBase
     [ProducesResponseType(typeof(Response),500)]
     public async Task<IActionResult> GetAddressChain(int objectId)
     {
-        return Ok(await _addressService.GetAddressChain(objectId));
+        try
+        {
+            return Ok(await _addressService.GetAddressChain(objectId));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500,new Response { Message = e.Message });
+        }
     }
 
 }
