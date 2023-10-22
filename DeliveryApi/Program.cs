@@ -3,6 +3,7 @@ using System.Text;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
 using DeliveryApi.Services;
+using DeliveryApi.Services.AddressService;
 using DeliveryApi.Services.BasketService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IBasketService, BasketService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 //Add Auth
 builder.Services.AddAuthentication(o =>
