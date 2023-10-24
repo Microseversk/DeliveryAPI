@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DeliveryApi.Models;
 
-public class UserDTO
+public class User
 {
     [Key]
     public Guid Id { get; set; }

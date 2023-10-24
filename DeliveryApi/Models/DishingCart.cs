@@ -11,8 +11,8 @@ public class DishingCart
     public Guid DishId { get; set; }
     
     [ForeignKey("UserId")]
-    public UserDTO User { get; set; }
+    public User User { get; set; }
     
     [ForeignKey("DishId")]
-    public DishDTO Dish { get; set; }
+    public Dish Dish { get; set; }
 }

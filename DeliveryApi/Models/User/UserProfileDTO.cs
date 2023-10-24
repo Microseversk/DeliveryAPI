@@ -4,10 +4,13 @@ using DeliveryApi.Validators;
 
 namespace DeliveryApi.Models;
 
-public class UserEditProfile
+public class UserProfileDTO
 {
     [MinLength(1)]
     public string FullName { get; set; }
+
+    [EmailAddress]
+    public string Email { get; set; }
 
     public Guid? AddressId { get; set; }
 

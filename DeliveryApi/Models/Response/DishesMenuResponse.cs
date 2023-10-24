@@ -2,6 +2,6 @@
 
 public class DishesMenuResponse
 {
-    public List<DishDTO> Dishes { get; set; }
+    public List<Dish> Dishes { get; set; }
     public PageInfo Page { get; set; }
 }

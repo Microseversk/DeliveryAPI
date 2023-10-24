@@ -12,8 +12,8 @@ public class BirthDate : ValidationAttribute
     {
         if (value is DateTime birthDate)
         {
-            var now = DateTime.Now.AddYears(-3);
-            var minDate = DateTime.Now.AddYears(-100);
+            var now = DateTime.UtcNow.AddYears(-3);
+            var minDate = DateTime.UtcNow.AddYears(-100);
             return birthDate <= now && birthDate >= minDate;
         }
 

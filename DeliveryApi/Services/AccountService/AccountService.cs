@@ -31,7 +31,7 @@ public class AccountService : IAccountService
         _tokenCreateHepler = new JwtTokenCreateHelper(key, issuer, audience, durationInMinute);
     }
 
-    public async Task<string> CreateUser(UserRegistration model)
+    public async Task<string> CreateUser(UserRegistrationDTO model)
     {
         var checkUser = await _context.User.FirstOrDefaultAsync(u => model.Email == u.Email);
         if (checkUser != null)
@@ -39,7 +39,7 @@ public class AccountService : IAccountService
             throw new Exception(message: "email data is already in use");
         }
 
-        UserDTO newUser = new UserDTO
+        User newUser = new User
         {
             Id = Guid.NewGuid(),
             Email = model.Email,
@@ -58,7 +58,7 @@ public class AccountService : IAccountService
         return token;
     }
 
-    public async Task<string> LoginUser(UserLogin model)
+    public async Task<string> LoginUser(UserLoginDTO model)
     {
         var user = await _context.User.SingleOrDefaultAsync(u => u.Email == model.Email);
 
@@ -88,11 +88,11 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<UserProfile> GetProfile(string token)
+    public async Task<UserProfileDTO> GetProfile(string token)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
 
-        return new UserProfile
+        return new UserProfileDTO
         {
             FullName = user.FullName,
             Email = user.Email,
@@ -103,7 +103,7 @@ public class AccountService : IAccountService
         };
     }
 
-    public async Task EditProfile(string token, UserEditProfile model)
+    public async Task EditProfile(string token, UserEditProfileDTO model)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
 

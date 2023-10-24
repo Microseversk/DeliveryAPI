@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DeliveryApi.Models;
 
-public class Basket
+public class OrderDishes
 {
     [Key]
-    public Guid UserId { get; set; }
+    public Guid OrderId { get; set; }
     public Guid DishId { get; set; }
+    
     public int Amount { get; set; }
-
-    [ForeignKey("UserId")]
-    public User User { get; set; }
-
+    
+    [ForeignKey("OrderId")]
+    public Order Order {get; set; }
+    
     [ForeignKey("DishId")]
-    public Dish Dish { get; set; }
-
+    public Dish Dish {get; set; }
 }

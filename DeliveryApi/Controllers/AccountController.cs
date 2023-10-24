@@ -21,7 +21,7 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(typeof(Response), 400)]
-    public async Task<IActionResult> Register(UserRegistration model)
+    public async Task<IActionResult> Register(UserRegistrationDTO model)
     {
         try
         {
@@ -36,7 +36,7 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(typeof(Response), 400)]
-    public async Task<IActionResult> Login(UserLogin model)
+    public async Task<IActionResult> Login(UserLoginDTO model)
     {
         try
         {
@@ -69,7 +69,7 @@ public class AccountController : ControllerBase
     [Authorize]
     [HttpGet("profile")]
     [ProducesResponseType(typeof(Response), 500)]
-    public async Task<ActionResult<UserProfile>> GetProfile()
+    public async Task<ActionResult<UserProfileDTO>> GetProfile()
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         try
@@ -85,7 +85,7 @@ public class AccountController : ControllerBase
     [Authorize]
     [HttpPut("profile")]
     [ProducesResponseType(typeof(Response), 500)]
-    public async Task<IActionResult> EditProfile(UserEditProfile model)
+    public async Task<IActionResult> EditProfile(UserEditProfileDTO model)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         try

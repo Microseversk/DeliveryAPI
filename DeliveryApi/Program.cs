@@ -5,6 +5,7 @@ using DeliveryApi.Enums;
 using DeliveryApi.Services;
 using DeliveryApi.Services.AddressService;
 using DeliveryApi.Services.BasketService;
+using DeliveryApi.Services.OrderService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 //Add Auth
 builder.Services.AddAuthentication(o =>
