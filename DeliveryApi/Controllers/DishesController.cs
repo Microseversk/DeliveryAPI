@@ -82,7 +82,7 @@ public class DishesController : ControllerBase
     [Authorize]
     [HttpPost("item/{id}/rating/")]
     [ProducesResponseType(typeof(Response),500)]
-    public async Task<IActionResult> PostUserRate(Guid id, double value)
+    public async Task<IActionResult> PostUserRate(Guid id,[Range(0,10)]double value)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         try

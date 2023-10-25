@@ -53,11 +53,6 @@ builder.Services.AddAuthentication(o =>
     };
 });
 
-//Add Policy
-builder.Services.AddAuthorization(o =>
-{
-    o.AddPolicy("AdminOnly", policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, "Admin"));
-});
 // Connect to DB
 builder.Services.AddDbContext<DeliveryContext>(options =>
 {
