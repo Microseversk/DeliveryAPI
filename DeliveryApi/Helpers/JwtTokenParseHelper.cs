@@ -21,11 +21,11 @@ public static class JwtTokenParseHelper
         return isBanned;
     }
 
-    public static async Task<UserDTO> GetUserFromContext(string token, DeliveryContext context)
+    public static async Task<User> GetUserFromContext(string token, DeliveryContext context)
     {
         if (await CheckToken(token, context) == true)
         {
-            throw new Exception(message: $@"Token is banned\n{token}");
+            throw new Exception(message: $@"Token is banned {token}");
         }
         var userEmail = GetClaimValue(token, ClaimTypes.Email);
         var user = await context.User.FirstOrDefaultAsync(user => user.Email == userEmail);

@@ -4,7 +4,7 @@ using DeliveryApi.Validators;
 
 namespace DeliveryApi.Models;
 
-public class UserRegistration
+public class UserRegistrationDTO
 {
     [MinLength(1)]
     public string FullName { get; set; }

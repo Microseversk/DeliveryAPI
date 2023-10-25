@@ -11,8 +11,8 @@ public class Rating
     public Guid DishId { get; set; }
 
     [ForeignKey("UserId")] 
-    private UserDTO User { get; set; }
+    private User User { get; set; }
 
     [ForeignKey("DishId")]
-    private DishDTO Dish { get; set; }
+    private Dish Dish { get; set; }
 }

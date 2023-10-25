@@ -24,7 +24,7 @@ public class DishesController : ControllerBase
 
     [Authorize(Policy = "AdminOnly")]
     [HttpPost("addDishes")]
-    public async Task<IActionResult> AddDishes(List<DishDTO> model)
+    public async Task<IActionResult> AddDishes(List<Dish> model)
     {
         await _dishService.AddDishes(model);
         return Ok();
@@ -47,7 +47,7 @@ public class DishesController : ControllerBase
     }
 
     [HttpGet("item/{id}")]
-    [ProducesResponseType(typeof(DishDTO), 200)]
+    [ProducesResponseType(typeof(Dish), 200)]
     [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> GetDishById(Guid id)
     {

@@ -25,7 +25,7 @@ public class DishService : IDishService
     {
         double DISHES_ON_PAGE = double.Parse(_config["Page:DishesOnPage"]);
         PageInfo pageInfo = new PageInfo { PageSize = (int)DISHES_ON_PAGE, CurrentPage = page };
-        IQueryable<DishDTO> reqDishes;
+        IQueryable<Dish> reqDishes;
 
         if (category != null)
         {
@@ -95,13 +95,13 @@ public class DishService : IDishService
     }
 
 
-    public async Task AddDishes(List<DishDTO> model)
+    public async Task AddDishes(List<Dish> model)
     {
         await _context.Dish.AddRangeAsync(model);
         await _context.SaveChangesAsync();
     }
 
-    public Task<DishDTO> GetDishById(Guid id)
+    public Task<Dish> GetDishById(Guid id)
     {
         var dish = _context.Dish.FirstOrDefaultAsync(d => d.Id == id);
         if (dish == null)

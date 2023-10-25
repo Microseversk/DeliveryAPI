@@ -3,7 +3,7 @@ using DeliveryApi.Enums;
 
 namespace DeliveryApi.Models;
 
-public class UserLogin
+public class UserLoginDTO
 {
     [EmailAddress]
     public string Email { get; set; }

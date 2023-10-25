@@ -3,7 +3,7 @@ using DeliveryApi.Enums;
 
 namespace DeliveryApi.Models;
 
-public class DishDTO
+public class Dish
 {
     [Key]
     public Guid Id { get; set; }

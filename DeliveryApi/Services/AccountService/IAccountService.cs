@@ -5,9 +5,9 @@ namespace DeliveryApi.Services;
 
 public interface IAccountService
 {
-    public Task<string> CreateUser(UserRegistration model);
-    public Task<string> LoginUser(UserLogin model);
+    public Task<string> CreateUser(UserRegistrationDTO model);
+    public Task<string> LoginUser(UserLoginDTO model);
     public Task LogoutUser(string token);
-    public Task<UserProfile> GetProfile(string token);
-    public Task EditProfile(string token, UserEditProfile model);
+    public Task<UserProfileDTO> GetProfile(string token);
+    public Task EditProfile(string token, UserEditProfileDTO model);
 }
