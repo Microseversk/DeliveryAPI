@@ -24,16 +24,36 @@ public class OrderController : ControllerBase
 
     [Authorize]
     [HttpGet("order/{id}")]
+    [ProducesResponseType(typeof(OrderDTO),200)]
+    [ProducesResponseType(typeof(Response),500)]
     public async Task<IActionResult> GetOrderInfo(Guid id)
     {
-        return Ok();
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            return Ok(await _orderService.GetOrderInfo(token, id));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
 
     [Authorize]
     [HttpGet("order")]
-    public async Task<IActionResult> GetOrder()
+    [ProducesResponseType(typeof(Response),500)]
+    [ProducesResponseType(typeof(List<OrderInfoDTO>),200)]
+    public async Task<IActionResult> GetOrderList()
     {
-        return Ok();
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+        try
+        {
+            return Ok(await _orderService.GetOrderList(token));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
 
     [Authorize]
@@ -75,4 +95,6 @@ public class OrderController : ControllerBase
             return StatusCode(500, new Response { Message = e.Message });
         }
     }
+
+    
 }

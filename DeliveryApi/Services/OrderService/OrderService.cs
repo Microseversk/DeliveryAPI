@@ -19,14 +19,63 @@ public class OrderService : IOrderService
     }
 
 
-    public Task<OrderDTO> GetOrderInfo(string token)
+    public async Task<OrderDTO> GetOrderInfo(string token, Guid orderId)
     {
-        throw new NotImplementedException();
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
+        var order = await _dContext.Order.FirstOrDefaultAsync(o => o.UserId == user.Id && o.Id == orderId);
+
+        if (order == null)
+        {
+            throw new Exception(message: "Order not found");
+        }
+
+        var orderDishes = (from od in _dContext.OrderDishes
+            where od.OrderId == orderId
+            select new BasketDTO
+            {
+                DishId = od.DishId,
+                Name = od.Dish.Name,
+                Price = od.Dish.Price,
+                Amount = od.Amount,
+                TotalPrice = od.Amount * od.Dish.Price,
+                Image = od.Dish.Image
+            }).ToList();
+        return new OrderDTO
+        {
+            Id = order.Id,
+            DeliveryTime = order.DeliveryTime,
+            OrderTime = order.OrderTime,
+            Status = order.Status,
+            Price = order.Price,
+            Dishes = orderDishes,
+            Address = order.Address.ToString()
+            //todo "переделать на название адреса вместо айди"
+        };
     }
 
-    public Task<OrderInfoDTO> GetOrderList(string token)
+    public async Task<List<OrderInfoDTO>> GetOrderList(string token)
     {
-        throw new NotImplementedException();
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
+        var userOrders = _dContext.Order.Where(o => o.UserId == user.Id);
+        if (userOrders.IsNullOrEmpty())
+        {
+            throw new Exception(message: "User has no orders");
+        }
+
+        List<OrderInfoDTO> userOrdersDTO = new List<OrderInfoDTO>();
+        foreach (var order in userOrders)
+        {
+            userOrdersDTO.Add(new OrderInfoDTO
+            {
+                Id = order.Id,
+                DeliveryTime = order.DeliveryTime,
+                OrderTime = order.OrderTime,
+                Status = order.Status,
+                Price = order.Price
+            });
+        }
+
+        return userOrdersDTO;
     }
 
     public async Task CreateOrder(string token, OrderCreateDTO model)
@@ -73,6 +122,7 @@ public class OrderService : IOrderService
         {
             throw new Exception(message: "Order was delivered");
         }
+
         order.Status = Status.Delivered;
         await _dContext.SaveChangesAsync();
     }
