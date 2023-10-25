@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone2)\\DeliveryApi\\DeliveryApi.csproj": {}
+    "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone3)\\DeliveryApi\\DeliveryApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone2)\\DeliveryApi\\DeliveryApi.csproj": {
+    "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone3)\\DeliveryApi\\DeliveryApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone2)\\DeliveryApi\\DeliveryApi.csproj",
+        "projectUniqueName": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone3)\\DeliveryApi\\DeliveryApi.csproj",
         "projectName": "DeliveryApi",
-        "projectPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone2)\\DeliveryApi\\DeliveryApi.csproj",
+        "projectPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone3)\\DeliveryApi\\DeliveryApi.csproj",
         "packagesPath": "C:\\Users\\Aleksandr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone2)\\DeliveryApi\\obj\\",
+        "outputPath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone3)\\DeliveryApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Aleksandr\\AppData\\Roaming\\NuGet\\NuGet.Config",

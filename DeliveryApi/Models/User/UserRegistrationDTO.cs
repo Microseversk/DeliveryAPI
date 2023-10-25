@@ -9,7 +9,7 @@ public class UserRegistrationDTO
     [MinLength(1)]
     public string FullName { get; set; }
 
-    [MinLength(6)]
+    [Password]
     public string Password { get; set; }
 
     [EmailAddress]

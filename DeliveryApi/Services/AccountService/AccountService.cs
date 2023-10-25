@@ -5,6 +5,7 @@ using DeliveryApi.Context;
 using DeliveryApi.Enums;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
+using DeliveryApi.Validators;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,15 @@ namespace DeliveryApi.Services;
 
 public class AccountService : IAccountService
 {
-    private readonly DeliveryContext _context;
+    private readonly DeliveryContext _dContext;
+    private readonly AddressContext _aContext;
     private readonly IConfiguration _configuration;
     private readonly JwtTokenCreateHelper _tokenCreateHepler;
 
-    public AccountService(DeliveryContext context, IConfiguration configuration)
+    public AccountService(DeliveryContext dContext, AddressContext aContext, IConfiguration configuration)
     {
-        _context = context;
+        _dContext = dContext;
+        _aContext = aContext;
         _configuration = configuration;
 
         string key = _configuration["JWTSettings:SecretKey"];
@@ -33,10 +36,15 @@ public class AccountService : IAccountService
 
     public async Task<string> CreateUser(UserRegistrationDTO model)
     {
-        var checkUser = await _context.User.FirstOrDefaultAsync(u => model.Email == u.Email);
+        var checkUser = await _dContext.User.FirstOrDefaultAsync(u => model.Email == u.Email);
         if (checkUser != null)
         {
             throw new Exception(message: "email data is already in use");
+        }
+
+        if (model.AddressId != null && !await Address.Isvalid(_aContext, model.AddressId))
+        {
+            throw new Exception(message: "Address not found");
         }
 
         User newUser = new User
@@ -50,8 +58,8 @@ public class AccountService : IAccountService
             AddressId = model.AddressId,
             HashedPassword = HashPasswordHelper.HashPassword(model.Password)
         };
-        await _context.AddAsync(newUser);
-        await _context.SaveChangesAsync();
+        await _dContext.AddAsync(newUser);
+        await _dContext.SaveChangesAsync();
 
         var token = _tokenCreateHepler.GenerateToken(newUser.Email, newUser.Role);
 
@@ -60,7 +68,7 @@ public class AccountService : IAccountService
 
     public async Task<string> LoginUser(UserLoginDTO model)
     {
-        var user = await _context.User.SingleOrDefaultAsync(u => u.Email == model.Email);
+        var user = await _dContext.User.SingleOrDefaultAsync(u => u.Email == model.Email);
 
         if (user == null)
         {
@@ -84,13 +92,13 @@ public class AccountService : IAccountService
 
     public async Task LogoutUser(string token)
     {
-        await _context.BannedTokens.AddAsync(new BannedToken{Token = token});
-        await _context.SaveChangesAsync();
+        await _dContext.BannedTokens.AddAsync(new BannedToken{Token = token});
+        await _dContext.SaveChangesAsync();
     }
 
     public async Task<UserProfileDTO> GetProfile(string token)
     {
-        var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
 
         return new UserProfileDTO
         {
@@ -105,11 +113,16 @@ public class AccountService : IAccountService
 
     public async Task EditProfile(string token, UserEditProfileDTO model)
     {
-        var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
+        var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
 
         if (user == null)
         {
-            return;
+            throw new Exception(message: "User bot found");
+        }
+        
+        if (model.AddressId != null && !await Address.Isvalid(_aContext, model.AddressId))
+        {
+            throw new Exception(message: "Address not found");
         }
 
         user.FullName = model.FullName;
@@ -117,7 +130,7 @@ public class AccountService : IAccountService
         user.BirthDate = model.BirthDate;
         user.Gender = model.Gender;
         user.Phone = model.Phone;
-        await _context.SaveChangesAsync();
+        await _dContext.SaveChangesAsync();
         return;
     }
 }
