@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
 namespace DeliveryApi.Controllers;
+
 [Route("/")]
 [ApiController]
 public class OrderController : ControllerBase
@@ -27,41 +28,51 @@ public class OrderController : ControllerBase
     {
         return Ok();
     }
-    
+
     [Authorize]
     [HttpGet("order")]
     public async Task<IActionResult> GetOrder()
     {
         return Ok();
     }
-    
+
     [Authorize]
     [HttpPost("order")]
-    [ProducesResponseType(typeof(Response),500)]
+    [ProducesResponseType(typeof(Response), 500)]
     public async Task<IActionResult> CreateOrder(OrderCreateDTO model)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         if (new DeliveryTime(_configuration).IsValid(model.DeliveryTime) == false)
         {
-            return BadRequest(new Response{Message = "Incorrect deliveryTime"});
+            return BadRequest(new Response { Message = "Incorrect deliveryTime" });
         }
 
         try
         {
-            await _orderService.CreateOrder(token,model);
+            await _orderService.CreateOrder(token, model);
         }
         catch (Exception e)
         {
             return StatusCode(400, new Response { Message = e.Message });
         }
-        
+
         return Ok();
     }
-    
+
     [Authorize]
     [HttpPost("order/{id}/status")]
-    public async Task<IActionResult> ConfirmOrder()
+    public async Task<IActionResult> ConfirmOrder(Guid id)
     {
-        return Ok();
+        var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+
+        try
+        {
+            await _orderService.ConfirmOrder(token, id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new Response { Message = e.Message });
+        }
     }
 }

@@ -7,6 +7,6 @@ public interface IOrderService
     public Task<OrderDTO> GetOrderInfo(string token);
     public Task<OrderInfoDTO> GetOrderList(string token);
     public Task CreateOrder(string token, OrderCreateDTO model);
-    public Task ConfirmOrder(string token);
+    public Task ConfirmOrder(string token, Guid orderId);
     
 }

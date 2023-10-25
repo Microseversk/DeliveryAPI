@@ -66,8 +66,14 @@ public class OrderService : IOrderService
         await _dContext.SaveChangesAsync();
     }
 
-    public Task ConfirmOrder(string token)
+    public async Task ConfirmOrder(string token, Guid orderId)
     {
-        throw new NotImplementedException();
+        var order = await _dContext.Order.FindAsync(orderId);
+        if (order.Status == Status.Delivered)
+        {
+            throw new Exception(message: "Order was delivered");
+        }
+        order.Status = Status.Delivered;
+        await _dContext.SaveChangesAsync();
     }
 }
