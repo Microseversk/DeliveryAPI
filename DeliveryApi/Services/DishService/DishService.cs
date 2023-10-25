@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
@@ -115,35 +116,40 @@ public class DishService : IDishService
     public async Task<Rating> CheckUserRated(string token, Guid dishId)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
-        
-        var rate = await _context.Rating.FindAsync(user.Id,dishId);
+
+        var rate = await _context.Rating.FindAsync(user.Id, dishId);
 
         return rate;
     }
-    
+
     public async Task PutUserRating(string token, Guid dishId, double value)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
         Rating newRate = new Rating { UserId = user.Id, DishId = dishId, Value = value };
-        
-        var rate = await CheckUserRated(token, dishId);
 
+        var rate = await CheckUserRated(token, dishId);
         if (rate != null)
         {
             rate.Value = value;
         }
         else
         {
+            var isBought = (from order in _context.Order where (order.UserId == user.Id)
+                                            from orderDish in _context.OrderDishes where (orderDish.DishId == dishId && orderDish.OrderId == order.Id) select orderDish).Any();
+            if (!isBought)
+            {
+                throw new Exception(message: "Denied. User didnt order this dish");
+            }
             await _context.Rating.AddAsync(new Rating { UserId = user.Id, DishId = dishId, Value = value });
         }
 
         await _context.SaveChangesAsync();
-        
+
         var avgRate = await _context.Rating.Where(r => r.DishId == dishId).AverageAsync(r => r.Value);
-        
+
         var dish = await _context.Dish.FindAsync(dishId);
         dish.Rating = avgRate;
-        
+
         await _context.SaveChangesAsync();
     }
 }
