@@ -22,77 +22,41 @@ public class DishesController : ControllerBase
         _dishService = dishService;
     }
 
-    [Authorize(Policy = "AdminOnly")]
-    [HttpPost("addDishes")]
-    public async Task<IActionResult> AddDishes(List<Dish> model)
-    {
-        await _dishService.AddDishes(model);
-        return Ok();
-    }
-
     [HttpGet]
     [ProducesResponseType(typeof(DishesMenuResponse), 200)]
-    [ProducesResponseType(typeof(Response), 500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false,
         DishSorting sortingBy = DishSorting.NameAsc, [Range(1, int.MaxValue)] int page = 1)
     {
-        try
-        {
-            return Ok(await _dishService.GetDishMenu(category, vegeterian, sortingBy, page));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        return Ok(await _dishService.GetDishMenu(category, vegeterian, sortingBy, page));
     }
 
     [HttpGet("item/{id}")]
     [ProducesResponseType(typeof(Dish), 200)]
-    [ProducesResponseType(typeof(Response), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
     public async Task<IActionResult> GetDishById(Guid id)
     {
-        try
-        {
-            return Ok(await _dishService.GetDishById(id));
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new Response { Message = e.Message });
-        }
+        return Ok(await _dishService.GetDishById(id));
     }
 
     [Authorize]
     [HttpGet("item/{id}/rating/check")]
     [ProducesResponseType(typeof(bool), 200)]
-    [ProducesResponseType(typeof(Response), 500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetUserRateOnDish(Guid id)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            bool response = (await _dishService.CheckUserRated(token, id) == null) ? false : true;
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        bool response = (await _dishService.CheckUserRated(token, id) == null) ? false : true;
+        return Ok(response);
     }
 
     [Authorize]
     [HttpPost("item/{id}/rating/")]
-    [ProducesResponseType(typeof(Response),500)]
-    public async Task<IActionResult> PostUserRate(Guid id,[Range(0,10)]double value)
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> PostUserRate(Guid id, [Range(0, 10)] double value)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            await _dishService.PutUserRating(token, id, value);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        await _dishService.PutUserRating(token, id, value);
+        return Ok();
     }
 }

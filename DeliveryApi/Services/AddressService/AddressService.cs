@@ -54,7 +54,7 @@ public class AddressService : IAddressService
         var parentList = new List<AsAdmHierarchy>();
         var currentObjId = objectId;
         var parent = await _context.AsAdmHierarchies.FirstOrDefaultAsync(o => o.Objectid == currentObjId);
-
+        
         while (parent != null)
         {
             parentList.Add(parent);

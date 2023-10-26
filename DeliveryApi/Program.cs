@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
+using DeliveryApi.Middleware;
 using DeliveryApi.Services;
 using DeliveryApi.Services.AddressService;
 using DeliveryApi.Services.BasketService;
@@ -22,6 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //Add Services
+builder.Services.AddTransient<ExceptionMiddleware>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IBasketService, BasketService>();
@@ -76,6 +78,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.ConfigureExceptionMiddleware();
 
 app.MapControllers();
 
