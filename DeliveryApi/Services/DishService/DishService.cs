@@ -3,10 +3,13 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
+using DeliveryApi.Exceptions;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DeliveryApi.Services;
 
@@ -87,19 +90,12 @@ public class DishService : IDishService
         var showedDishes = gottenDishes.Skip((pageInfo.CurrentPage - 1) * pageInfo.PageSize).Take(pageInfo.PageSize)
             .ToList();
 
-        if (showedDishes.Count == 0)
+        if (showedDishes.IsNullOrEmpty())
         {
-            throw new Exception(message: "Invalid page value");
+            throw new NotFoundException("Page not found");
         }
 
         return new DishesMenuResponse { Dishes = showedDishes, Page = pageInfo };
-    }
-
-
-    public async Task AddDishes(List<Dish> model)
-    {
-        await _context.Dish.AddRangeAsync(model);
-        await _context.SaveChangesAsync();
     }
 
     public Task<Dish> GetDishById(Guid id)
@@ -107,7 +103,7 @@ public class DishService : IDishService
         var dish = _context.Dish.FirstOrDefaultAsync(d => d.Id == id);
         if (dish == null)
         {
-            throw new Exception(message: "Such dishId not found");
+            throw new NotFoundException("Dish not found");
         }
 
         return dish;
@@ -117,6 +113,11 @@ public class DishService : IDishService
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
 
+        if (user == null)
+        {
+            throw new NotFoundException("User not found");
+        }
+
         var rate = await _context.Rating.FindAsync(user.Id, dishId);
 
         return rate;
@@ -125,6 +126,11 @@ public class DishService : IDishService
     public async Task PutUserRating(string token, Guid dishId, double value)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
+        if (user == null)
+        {
+            throw new NotFoundException("User not found");
+        }
+
         Rating newRate = new Rating { UserId = user.Id, DishId = dishId, Value = value };
 
         var rate = await CheckUserRated(token, dishId);
@@ -134,12 +140,16 @@ public class DishService : IDishService
         }
         else
         {
-            var isBought = (from order in _context.Order where (order.UserId == user.Id)
-                                            from orderDish in _context.OrderDishes where (orderDish.DishId == dishId && orderDish.OrderId == order.Id) select orderDish).Any();
+            var isBought = (from order in _context.Order
+                where (order.UserId == user.Id)
+                from orderDish in _context.OrderDishes
+                where (orderDish.DishId == dishId && orderDish.OrderId == order.Id)
+                select orderDish).Any();
             if (!isBought)
             {
-                throw new Exception(message: "Denied. User didnt order this dish");
+                throw new BadRequestException(message: "Denied. User didnt order this dish");
             }
+
             await _context.Rating.AddAsync(new Rating { UserId = user.Id, DishId = dishId, Value = value });
         }
 

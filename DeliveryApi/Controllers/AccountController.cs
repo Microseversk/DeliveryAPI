@@ -20,82 +20,48 @@ public class AccountController : ControllerBase
 
     [HttpPost("register")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
-    [ProducesResponseType(typeof(Response), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Register(UserRegistrationDTO model)
     {
-        try
-        {
-            return Ok(new TokenResponse { Token = await _accountService.CreateUser(model) });
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new Response { Message = e.Message });
-        }
+        return Ok(new TokenResponse { Token = await _accountService.CreateUser(model) });
     }
 
     [HttpPost("login")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
-    [ProducesResponseType(typeof(Response), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Login(UserLoginDTO model)
     {
-        try
-        {
-            return Ok(new TokenResponse { Token = await _accountService.LoginUser(model) });
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new Response { Message = e.Message });
-        }
+        return Ok(new TokenResponse { Token = await _accountService.LoginUser(model) });
     }
 
     [Authorize]
     [HttpGet("logout")]
-    [ProducesResponseType(typeof(Response), 500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Logout()
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            await _accountService.LogoutUser(token);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
-
+        await _accountService.LogoutUser(token);
         return Ok();
     }
 
     [Authorize]
     [HttpGet("profile")]
-    [ProducesResponseType(typeof(Response), 500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<ActionResult<UserProfileDTO>> GetProfile()
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            return Ok(await _accountService.GetProfile(token));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        return Ok(await _accountService.GetProfile(token));
     }
 
     [Authorize]
     [HttpPut("profile")]
-    [ProducesResponseType(typeof(Response), 500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> EditProfile(UserEditProfileDTO model)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            await _accountService.EditProfile(token, model);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        await _accountService.EditProfile(token, model);
+        return Ok();
     }
 }

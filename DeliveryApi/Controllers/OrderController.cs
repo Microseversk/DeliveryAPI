@@ -1,4 +1,5 @@
 ﻿using DeliveryApi.Context;
+using DeliveryApi.Exceptions;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
 using DeliveryApi.Services.OrderService;
@@ -24,77 +25,49 @@ public class OrderController : ControllerBase
 
     [Authorize]
     [HttpGet("order/{id}")]
-    [ProducesResponseType(typeof(OrderDTO),200)]
-    [ProducesResponseType(typeof(Response),500)]
+    [ProducesResponseType(typeof(OrderDTO), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetOrderInfo(Guid id)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            return Ok(await _orderService.GetOrderInfo(token, id));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        return Ok(await _orderService.GetOrderInfo(token, id));
     }
 
     [Authorize]
     [HttpGet("order")]
-    [ProducesResponseType(typeof(Response),500)]
-    [ProducesResponseType(typeof(List<OrderInfoDTO>),200)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    [ProducesResponseType(typeof(List<OrderInfoDTO>), 200)]
     public async Task<IActionResult> GetOrderList()
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        try
-        {
-            return Ok(await _orderService.GetOrderList(token));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        return Ok(await _orderService.GetOrderList(token));
     }
 
     [Authorize]
     [HttpPost("order")]
-    [ProducesResponseType(typeof(Response), 500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> CreateOrder(OrderCreateDTO model)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
+
         if (new DeliveryTime(_configuration).IsValid(model.DeliveryTime) == false)
         {
-            return BadRequest(new Response { Message = "Incorrect deliveryTime" });
+            throw new BadRequestException("Incorrect deliveryTime");
         }
 
-        try
-        {
-            await _orderService.CreateOrder(token, model);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(400, new Response { Message = e.Message });
-        }
+        await _orderService.CreateOrder(token, model);
+
 
         return Ok();
     }
 
     [Authorize]
     [HttpPost("order/{id}/status")]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> ConfirmOrder(Guid id)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-
-        try
-        {
-            await _orderService.ConfirmOrder(token, id);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new Response { Message = e.Message });
-        }
+        await _orderService.ConfirmOrder(token, id);
+        return Ok();
     }
-
-    
 }
