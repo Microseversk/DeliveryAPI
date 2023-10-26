@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Azure.Core;
 using DeliveryApi.Context;
 using DeliveryApi.Enums;
+using DeliveryApi.Exceptions;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
 using DeliveryApi.Validators;
@@ -39,12 +40,12 @@ public class AccountService : IAccountService
         var checkUser = await _dContext.User.FirstOrDefaultAsync(u => model.Email == u.Email);
         if (checkUser != null)
         {
-            throw new Exception(message: "email data is already in use");
+            throw new BadRequestException("email data is already in use");
         }
 
         if (model.AddressId != null && !await Address.Isvalid(_aContext, model.AddressId))
         {
-            throw new Exception(message: "Address not found");
+            throw new BadRequestException("Address not found");
         }
 
         User newUser = new User
@@ -72,16 +73,14 @@ public class AccountService : IAccountService
 
         if (user == null)
         {
-            throw new Exception(message: "Bad email");
-            return null;
+            throw new BadRequestException("Bad email");
         }
 
         var verifyPassword = HashPasswordHelper.VerifyPassword(model.Password, user.HashedPassword);
 
         if (!verifyPassword)
         {
-            throw new Exception(message: "Bad password");
-            return null;
+            throw new BadRequestException("Bad password");
         }
 
         Role role = (user.Role == Role.Admin) ? Role.Admin : Role.User;
@@ -99,7 +98,10 @@ public class AccountService : IAccountService
     public async Task<UserProfileDTO> GetProfile(string token)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
-
+        if (user == null)
+        {
+            throw new NotFoundException("User not found");
+        }
         return new UserProfileDTO
         {
             FullName = user.FullName,
@@ -117,12 +119,12 @@ public class AccountService : IAccountService
 
         if (user == null)
         {
-            throw new Exception(message: "User bot found");
+            throw new NotFoundException("User not found");
         }
         
         if (model.AddressId != null && !await Address.Isvalid(_aContext, model.AddressId))
         {
-            throw new Exception(message: "Address not found");
+            throw new BadRequestException("Address not found");
         }
 
         user.FullName = model.FullName;

@@ -1,5 +1,6 @@
 ﻿using DeliveryApi.Context;
 using DeliveryApi.Enums;
+using DeliveryApi.Exceptions;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +23,17 @@ public class OrderService : IOrderService
     public async Task<OrderDTO> GetOrderInfo(string token, Guid orderId)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
+
+        if (user == null)
+        {
+            throw new NotFoundException("User not found");
+        }
+
         var order = await _dContext.Order.FirstOrDefaultAsync(o => o.UserId == user.Id && o.Id == orderId);
 
         if (order == null)
         {
-            throw new Exception(message: "Order not found");
+            throw new NotFoundException("Order not found");
         }
 
         var orderDishes = (from od in _dContext.OrderDishes
@@ -56,10 +63,16 @@ public class OrderService : IOrderService
     public async Task<List<OrderInfoDTO>> GetOrderList(string token)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
+
+        if (user == null)
+        {
+            throw new NotFoundException("User not found");
+        }
+
         var userOrders = _dContext.Order.Where(o => o.UserId == user.Id);
         if (userOrders.IsNullOrEmpty())
         {
-            throw new Exception(message: "User has no orders");
+            throw new NotFoundException("User has no orders");
         }
 
         List<OrderInfoDTO> userOrdersDTO = new List<OrderInfoDTO>();
@@ -81,10 +94,16 @@ public class OrderService : IOrderService
     public async Task CreateOrder(string token, OrderCreateDTO model)
     {
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
+
+        if (user == null)
+        {
+            throw new NotFoundException("User not found");
+        }
+
         var userBasket = _dContext.Basket.Where(b => b.UserId == user.Id).Include(b => b.Dish);
         if (userBasket.IsNullOrEmpty())
         {
-            throw new Exception(message: "Basket is empty");
+            throw new BadRequestException("Denied. Basket is empty");
         }
 
         var orderId = Guid.NewGuid();
@@ -120,7 +139,7 @@ public class OrderService : IOrderService
         var order = await _dContext.Order.FindAsync(orderId);
         if (order.Status == Status.Delivered)
         {
-            throw new Exception(message: "Order was delivered");
+            throw new BadRequestException("Denied. Order was delivered");
         }
 
         order.Status = Status.Delivered;
