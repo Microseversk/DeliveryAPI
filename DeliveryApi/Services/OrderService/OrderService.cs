@@ -26,14 +26,14 @@ public class OrderService : IOrderService
 
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
 
         var order = await _dContext.Order.FirstOrDefaultAsync(o => o.UserId == user.Id && o.Id == orderId);
 
         if (order == null)
         {
-            throw new NotFoundException("Order not found");
+            throw new BadRequestException("Order not found");
         }
 
         var orderDishes = (from od in _dContext.OrderDishes
@@ -66,7 +66,7 @@ public class OrderService : IOrderService
 
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
 
         var userOrders = _dContext.Order.Where(o => o.UserId == user.Id);
@@ -97,7 +97,7 @@ public class OrderService : IOrderService
 
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
 
         var userBasket = _dContext.Basket.Where(b => b.UserId == user.Id).Include(b => b.Dish);

@@ -22,7 +22,7 @@ public class BasketService : IBasketService
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
 
         var userBasket = _context.Basket.Where(b => b.UserId == user.Id).Include(b => b.Dish).ToList();
@@ -48,12 +48,12 @@ public class BasketService : IBasketService
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
 
         if (_context.Dish.Where(d => d.Id == dishId).ToList().IsNullOrEmpty())
         {
-            throw new NotFoundException("Dish not found");
+            throw new NotFoundException($"Dish {dishId} not found");
         }
 
         var userBasketPos = await _context.Basket.FirstOrDefaultAsync(b => b.UserId == user.Id && b.DishId == dishId);
@@ -75,7 +75,7 @@ public class BasketService : IBasketService
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _context);
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
 
         if (_context.Dish.Where(d => d.Id == dishId).ToList().IsNullOrEmpty())

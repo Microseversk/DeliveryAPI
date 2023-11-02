@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/OQHUHriS6D5yFLxpLzPZw8wbDIZozyKD3zWM3pv+h1cEztvgAYCgC8Ndm98w90bWnVurXbpS2lU1lDSoO9NMw==",
+  "dgSpecHash": "T4vYNw0Sa/0igtYSKNR1n/4MHoLxB2hhjrtjFIY6R5ac4KNuGuvEvqT7nDsv2sw+1KrQ/f8u5//JTs8KFWLxrQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI(Clone3)\\DeliveryApi\\DeliveryApi.csproj",
+  "projectFilePath": "C:\\Users\\Aleksandr\\RiderProjects\\DeliveryAPI\\DeliveryApi\\DeliveryApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Aleksandr\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\Aleksandr\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
