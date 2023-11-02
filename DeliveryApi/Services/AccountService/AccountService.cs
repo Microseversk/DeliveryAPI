@@ -100,7 +100,7 @@ public class AccountService : IAccountService
         var user = await JwtTokenParseHelper.GetUserFromContext(token, _dContext);
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
         return new UserProfileDTO
         {
@@ -119,12 +119,12 @@ public class AccountService : IAccountService
 
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new BadRequestException("Invalid token");
         }
         
         if (model.AddressId != null && !await Address.Isvalid(_aContext, model.AddressId))
         {
-            throw new BadRequestException("Address not found");
+            throw new BadRequestException($@"Address {model.AddressId} not found");
         }
 
         user.FullName = model.FullName;

@@ -77,7 +77,6 @@ C:\Users\Aleksandr\RiderProjects\DeliveryApi\DeliveryApi\bin\Debug\net7.0\runtim
 C:\Users\Aleksandr\RiderProjects\DeliveryApi\DeliveryApi\bin\Debug\net7.0\Npgsql.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryApi\DeliveryApi\bin\Debug\net7.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryApi\DeliveryApi\bin\Debug\net7.0\BCrypt.Net-Next.dll
-C:\Users\Aleksandr\RiderProjects\DeliveryApi\DeliveryApi\bin\Debug\net7.0\FluentValidation.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryApi\DeliveryApi\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\appsettings.Development.json
 C:\Users\Aleksandr\RiderProjects\DeliveryAPI(Clone)\DeliveryApi\bin\Debug\net7.0\appsettings.json

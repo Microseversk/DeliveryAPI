@@ -49,7 +49,6 @@ public class DishService : IDishService
         }
 
         pageInfo.PageCount = (int)Math.Ceiling(reqDishes.ToList().Count() / DISHES_ON_PAGE);
-
         switch (sortingBy)
         {
             case (DishSorting.NameAsc):
