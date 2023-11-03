@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
 
-[Route("/")]
+[Route("/api/dish/")]
 [ApiController]
 public class DishesController : ControllerBase
 {
@@ -22,7 +22,7 @@ public class DishesController : ControllerBase
         _dishService = dishService;
     }
 
-    [HttpGet]
+    [HttpGet("")]
     [ProducesResponseType(typeof(DishesMenuResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false,
@@ -31,7 +31,7 @@ public class DishesController : ControllerBase
         return Ok(await _dishService.GetDishMenu(category, vegeterian, sortingBy, page));
     }
 
-    [HttpGet("item/{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(Dish), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     public async Task<IActionResult> GetDishById(Guid id)
@@ -40,7 +40,7 @@ public class DishesController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("item/{id}/rating/check")]
+    [HttpGet("{id}/rating/check")]
     [ProducesResponseType(typeof(bool), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetUserRateOnDish(Guid id)
@@ -51,7 +51,7 @@ public class DishesController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("item/{id}/rating/")]
+    [HttpPost("{id}/rating")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> PostUserRate(Guid id, [Range(0, 10)] double value)
     {

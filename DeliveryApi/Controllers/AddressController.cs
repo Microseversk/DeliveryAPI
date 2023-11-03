@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
 
-[Route("/address/")]
+[Route("/api/address/")]
 [ApiController]
 public class AddressController : ControllerBase
 {
@@ -24,7 +24,7 @@ public class AddressController : ControllerBase
         return Ok(await _addressService.GetObjectChildren(parentObjectId, query));
     }
 
-    [HttpGet("getaddresschain")]
+    [HttpGet("chain")]
     [ProducesResponseType(typeof(List<AddressDTO>), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetAddressChain(int objectId)
