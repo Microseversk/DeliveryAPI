@@ -10,7 +10,7 @@ using Microsoft.Data.SqlClient;
 
 namespace DeliveryApi.Controllers;
 
-[Route("/")]
+[Route("/api/order/")]
 [ApiController]
 public class OrderController : ControllerBase
 {
@@ -24,7 +24,7 @@ public class OrderController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("order/{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(OrderDTO), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetOrderInfo(Guid id)
@@ -34,7 +34,7 @@ public class OrderController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("order")]
+    [HttpGet("")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     [ProducesResponseType(typeof(List<OrderInfoDTO>), 200)]
     public async Task<IActionResult> GetOrderList()
@@ -44,7 +44,7 @@ public class OrderController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("order")]
+    [HttpPost("")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> CreateOrder(OrderCreateDTO model)
     {
@@ -62,7 +62,7 @@ public class OrderController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("order/{id}/status")]
+    [HttpPost("{id}/status")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> ConfirmOrder(Guid id)
     {
