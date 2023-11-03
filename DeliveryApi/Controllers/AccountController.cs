@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Controllers;
 
-[Route("/")]
+[Route("/api/account/")]
 [ApiController]
 public class AccountController : ControllerBase
 {

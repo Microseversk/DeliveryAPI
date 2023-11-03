@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DeliveryApi.Controllers;
 
 [Authorize]
-[Route("/")]
+[Route("/api/basket/")]
 [ApiController]
 public class BasketController : ControllerBase
 {
@@ -19,7 +19,7 @@ public class BasketController : ControllerBase
         _basketService = basketService;
     }
 
-    [HttpGet("cart/")]
+    [HttpGet("")]
     [ProducesResponseType(typeof(List<BasketDTO>), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetUserBusket()
@@ -28,21 +28,21 @@ public class BasketController : ControllerBase
         return Ok(await _basketService.GetUserBasket(token));
     }
 
-    [HttpGet("cart/{id}")]
+    [HttpGet("dish/{dishId}")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> AddToUserBasket(Guid id)
+    public async Task<IActionResult> AddToUserBasket(Guid dishId)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        await _basketService.AddToUserBasket(token, id);
+        await _basketService.AddToUserBasket(token, dishId);
         return Ok();
     }
 
-    [HttpDelete("cart/{id}")]
+    [HttpDelete("dish/{dishId}")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> DeleteFromUserBasket(Guid id, bool increase)
+    public async Task<IActionResult> DeleteFromUserBasket(Guid dishId, bool increase)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
-        await _basketService.DeleteFromUserBasket(token, id, increase);
+        await _basketService.DeleteFromUserBasket(token, dishId, increase);
         return Ok();
     }
 }
