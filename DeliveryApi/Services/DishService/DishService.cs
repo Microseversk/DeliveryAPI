@@ -140,7 +140,7 @@ public class DishService : IDishService
         else
         {
             var isBought = (from order in _context.Order
-                where (order.UserId == user.Id)
+                where (order.UserId == user.Id && order.Status == Status.Delivered)
                 from orderDish in _context.OrderDishes
                 where (orderDish.DishId == dishId && orderDish.OrderId == order.Id)
                 select orderDish).Any();
