@@ -3,6 +3,7 @@ using DeliveryApi.Enums;
 using DeliveryApi.Exceptions;
 using DeliveryApi.Helpers;
 using DeliveryApi.Models;
+using DeliveryApi.Validators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -98,6 +99,11 @@ public class OrderService : IOrderService
         if (user == null)
         {
             throw new BadRequestException("Invalid token");
+        }
+
+        if (await Address.Isvalid(_aContext, model.AddressId) == false)
+        {
+            throw new BadRequestException("Bad address");
         }
 
         var userBasket = _dContext.Basket.Where(b => b.UserId == user.Id).Include(b => b.Dish);

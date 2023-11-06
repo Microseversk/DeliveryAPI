@@ -22,7 +22,7 @@ public class BasketController : ControllerBase
     [HttpGet("")]
     [ProducesResponseType(typeof(List<BasketDTO>), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> GetUserBusket()
+    public async Task<IActionResult> GetUserBasket()
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         return Ok(await _basketService.GetUserBasket(token));

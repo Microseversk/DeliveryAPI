@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DeliveryApi.Context;
+using DeliveryApi.Exceptions;
 using DeliveryApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -25,7 +26,7 @@ public static class JwtTokenParseHelper
     {
         if (await CheckToken(token, context) == true)
         {
-            throw new Exception(message: $@"Token is banned {token}");
+            throw new BadRequestException("Token is banned");
         }
         var userEmail = GetClaimValue(token, ClaimTypes.Email);
         var user = await context.User.FirstOrDefaultAsync(user => user.Email == userEmail);

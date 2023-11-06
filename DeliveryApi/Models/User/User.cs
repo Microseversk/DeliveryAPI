@@ -9,7 +9,6 @@ public class User
 {
     [Key]
     public Guid Id { get; set; }
-
     public Role Role { get; set; } = Role.User;
 
     [EmailAddress]
@@ -20,13 +19,9 @@ public class User
     
     [BirthDate]
     public DateTime? BirthDate { get; set; }
-    
     public Gender Gender { get; set; }
-
     [PhoneRussia]
     public string? Phone { get; set; }
-    
     public Guid? AddressId { get; set; }
-    
     public string HashedPassword { get; set; }
 }

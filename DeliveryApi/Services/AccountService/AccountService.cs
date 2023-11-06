@@ -91,8 +91,11 @@ public class AccountService : IAccountService
 
     public async Task LogoutUser(string token)
     {
-        await _dContext.BannedTokens.AddAsync(new BannedToken{Token = token});
-        await _dContext.SaveChangesAsync();
+        if (await JwtTokenParseHelper.GetUserFromContext(token, _dContext) != null)
+        {
+            await _dContext.BannedTokens.AddAsync(new BannedToken{Token = token});
+            await _dContext.SaveChangesAsync();    
+        }
     }
 
     public async Task<UserProfileDTO> GetProfile(string token)
