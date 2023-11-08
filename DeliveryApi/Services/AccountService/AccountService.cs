@@ -127,7 +127,7 @@ public class AccountService : IAccountService
         
         if (model.AddressId != null && !await Address.Isvalid(_aContext, model.AddressId))
         {
-            throw new BadRequestException($@"Address {model.AddressId} not found");
+            throw new BadRequestException($@"Address not found");
         }
 
         user.FullName = model.FullName;
