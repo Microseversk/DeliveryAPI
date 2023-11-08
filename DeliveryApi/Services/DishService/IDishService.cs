@@ -1,11 +1,12 @@
 ﻿using DeliveryApi.Enums;
 using DeliveryApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryApi.Services;
 
 public interface IDishService
 {
-    public Task<DishesMenuResponse> GetDishMenu(DishCategory? category, bool vegeterian, DishSorting sortingBy,
+    public Task<DishesMenuResponse> GetDishMenu(List<DishCategory>category, bool vegeterian, DishSorting sortingBy,
         int page);
 
     public Task<Dish> GetDishById(Guid id);

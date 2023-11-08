@@ -25,7 +25,7 @@ public class DishesController : ControllerBase
     [HttpGet("")]
     [ProducesResponseType(typeof(DishesMenuResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> GetDishes(DishCategory? category, bool vegeterian = false,
+    public async Task<IActionResult> GetDishes([FromQuery]List<DishCategory> category, bool vegeterian = false,
         DishSorting sortingBy = DishSorting.NameAsc, [Range(1, int.MaxValue)] int page = 1)
     {
         return Ok(await _dishService.GetDishMenu(category, vegeterian, sortingBy, page));

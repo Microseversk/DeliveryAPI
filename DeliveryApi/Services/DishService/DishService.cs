@@ -24,17 +24,17 @@ public class DishService : IDishService
         _config = config;
     }
 
-    public async Task<DishesMenuResponse> GetDishMenu(DishCategory? category, bool vegeterian, DishSorting sortingBy,
+    public async Task<DishesMenuResponse> GetDishMenu(List<DishCategory>category, bool vegeterian, DishSorting sortingBy,
         int page)
     {
         double DISHES_ON_PAGE = double.Parse(_config["Page:DishesOnPage"]);
         PageInfo pageInfo = new PageInfo { PageSize = (int)DISHES_ON_PAGE, CurrentPage = page };
         IQueryable<Dish> reqDishes;
 
-        if (category != null)
+        if (!category.IsNullOrEmpty())
         {
             reqDishes = _context.Dish
-                .Where(dish => dish.Category == category)
+                .Where(dish => category.Contains(dish.Category))
                 .Where(dish =>
                     (vegeterian == false)
                         ? dish.Vegetarian == true || dish.Vegetarian == false
