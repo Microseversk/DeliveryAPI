@@ -56,8 +56,7 @@ public class OrderService : IOrderService
             Status = order.Status,
             Price = order.Price,
             Dishes = orderDishes,
-            Address = order.Address.ToString()
-            //todo "переделать на название адреса вместо айди"
+            Address = order.Address
         };
     }
 
@@ -135,7 +134,7 @@ public class OrderService : IOrderService
             DeliveryTime = model.DeliveryTime,
             Status = Status.InProcess,
             Price = price,
-            Address = model.AddressId.ToString()
+            Address = model.AddressId
         });
         await _dContext.SaveChangesAsync();
     }

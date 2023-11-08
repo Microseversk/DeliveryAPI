@@ -13,5 +13,5 @@ public class OrderDTO
     public double Price { get; set; }
     public List<BasketDTO> Dishes { get; set; }
     
-    public string Address { get; set; }
+    public Guid Address { get; set; }
 }

@@ -16,5 +16,5 @@ public class Order
     public DateTime DeliveryTime { get; set; }
     public Status Status { get; set; }
     public double Price { get; set; }
-    public string Address { get; set; }
+    public Guid Address { get; set; }
 }
