@@ -12,6 +12,5 @@ public class OrderDTO
     public Status Status { get; set; }
     public double Price { get; set; }
     public List<BasketDTO> Dishes { get; set; }
-    
-    public Guid Address { get; set; }
+    public string Address { get; set; }
 }

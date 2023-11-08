@@ -39,7 +39,7 @@ public class BasketController : ControllerBase
 
     [HttpDelete("dish/{dishId}")]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> DeleteFromUserBasket(Guid dishId, bool increase)
+    public async Task<IActionResult> DeleteFromUserBasket(Guid dishId, bool increase = false)
     {
         var token = JwtTokenParseHelper.NormalizeToken(Request.Headers["Authorization"]);
         await _basketService.DeleteFromUserBasket(token, dishId, increase);
